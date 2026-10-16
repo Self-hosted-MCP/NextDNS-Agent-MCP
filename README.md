@@ -80,7 +80,7 @@ More in [docs/how-it-works.md](docs/how-it-works.md).
 | **2. A hosting company** | Railway, Render or any host that runs Docker | Always | A few dollars a month | [setup-hosting.md](docs/setup-hosting.md) |
 | **3. Your own server** | Any server with Docker | Always | Free to cheap | [setup-own-server.md](docs/setup-own-server.md) |
 
-<a href="https://render.com/deploy?repo=https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render"></a>
+<a href="https://railway.com/deploy/nextdns-agent-mcp"><img src="https://railway.com/button.svg" alt="Deploy on Railway"></a> <a href="https://render.com/deploy?repo=https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render"></a>
 
 > [!TIP]
 > Not sure? Start with **1**, free, on your computer. Move to **2** when you want it on your phone all the time.

@@ -10,6 +10,14 @@ Every option runs the ready-made image `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-
 
 The server picks up its public address by itself on Render and Railway. Elsewhere, set `PUBLIC_URL` to it.
 
+## One click: Railway
+
+<a href="https://railway.com/deploy/nextdns-agent-mcp"><img src="https://railway.com/button.svg" alt="Deploy on Railway"></a>
+
+1. Press the button. Railway shows the template: the ready-made image, a disk at `/data`, and a public address.
+2. Fill in `LOGIN_PASSPHRASE` (6+ characters). Railway makes `NEXTDNS_SECRET_KEY` for you.
+3. Press **Deploy**. When it turns green, open the address it shows, add `/settings`, sign in, and paste your API key.
+
 ## One click: Render
 
 <a href="https://render.com/deploy?repo=https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render"></a>
@@ -19,7 +27,7 @@ The server picks up its public address by itself on Render and Railway. Elsewher
 3. Render uses its smallest paid instance, because the free one can't keep a disk and falls asleep.
 4. When it's live, open `https://<your-app>.onrender.com/settings`, sign in, and paste your API key.
 
-## Railway
+## Railway, by hand
 
 1. In Railway: **New project → Docker image**: `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest`. (Or **Deploy from GitHub repo** with this repository: it builds the `Dockerfile`, see [`railway.json`](../railway.json).)
 2. **Variables:** `LOGIN_PASSPHRASE`, `NEXTDNS_SECRET_KEY` (Railway can make one: `${{secret(64)}}`) and `PORT=8766`.

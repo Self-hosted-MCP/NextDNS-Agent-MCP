@@ -61,3 +61,49 @@ Every change is saved in the change log, with how that part of the profile looke
 - Keep profiles for other people's devices **hidden** unless you're working on them.
 - On the web version, give each app only the profiles it needs.
 - Back up a profile before a big change ([undo-and-backups.md](undo-and-backups.md)).
+
+## What this doesn't protect against
+
+- **An AI you told to do something harmful.** If you ask it to turn off every protection, it will (after confirmations for deletes). The change log and undo are there to put it back.
+- **An AI tricked into repeating.** If a domain name or log entry convinces the AI to quote your logs somewhere else in its answer, the server can't tell. The AI app only shows that to you, but take care when you share AI answers.
+- **Someone who knows your passphrase,** or has your unlocked computer, or your API key.
+- **Your hosting company, NextDNS or the AI company** reading what passes through their systems. Their own privacy rules apply.
+- **Changes made outside this server,** in the NextDNS dashboard or by another tool with your key. They aren't in the change log, so undo can't put them back (but undo notices them and stops).
+
+## If something goes wrong
+
+1. **Cut access at the source:** make a new API key at my.nextdns.io/account. The old one stops working at once, for this server and anything else that had it.
+2. **Stop all changes:** turn on read-only mode (settings page, **Safety** tab, or `NEXTDNS_READ_ONLY=on`).
+3. **See what changed:** the **Changes** tab, or ask *"what changed today?"*. Undo what shouldn't be there, newest first.
+4. **Log every app out:** **Disconnect** each one on the **Apps** tab, or delete `oauth.json` in the data folder and restart.
+5. **Change your passphrase:** `nextdns-agent-mcp set-passphrase`, or change `LOGIN_PASSPHRASE` and restart. This signs every browser out of the settings page.
+6. **Put a profile back from a backup** if many things changed ([undo-and-backups.md](undo-and-backups.md)).
+
+## Checked against MCP security guidance
+
+How the web version measures up to the [MCP security best practices](https://modelcontextprotocol.io/specification/2025-11-25/basic/security_best_practices) and the [MCP authorization rules](https://modelcontextprotocol.io/specification/2025-11-25/basic/authorization):
+
+| Guidance | Here |
+|---|---|
+| Access keys only accepted when issued for this server (audience) | Yes. Keys are made by this server only, and a key issued for another server address is refused |
+| Short-lived access keys, rotating renewal keys | Yes. 1 hour; each renewal key works once; 90 days at most |
+| PKCE with S256 on every login | Yes, through the MCP SDK |
+| Redirect addresses only to known apps | Yes. Registered addresses must be localhost or on `ALLOWED_REDIRECT_HOSTS` |
+| Login (consent) page names the app and where it returns, can't be framed | Yes. A warning shows when the app returns to `localhost` |
+| Keys never in web addresses, stored only as fingerprints | Yes (SHA-256) |
+| Least privilege | Per-app profile choice, per-app change permission, per-profile modes, read-only mode |
+| Settings cookie | `__Host-` prefix on HTTPS, Secure, HttpOnly, SameSite=Strict, server-side session |
+| Forms protected against other websites (CSRF) | A token and a same-origin check on every settings form |
+| Protection against other websites reaching a server on your own computer (DNS rebinding) | Yes, on the `/mcp` address |
+| No passing your login keys on to other services | Yes. The NextDNS API key is the only key sent to NextDNS; AI apps' keys never leave the server |
+| Destructive tools marked | `delete_profile`, `clear_logs`, `restore_backup` and `undo` carry `destructiveHint` |
+| Prompt injection | Data from NextDNS is labelled as data in the server's instructions; deletes need your yes; everything can be undone |
+
+**Known limits:**
+
+- **Lockout:** five wrong passphrases lock the login for everyone for 15 minutes. Someone who finds your server could keep you locked out that way, but can't get in. If it happens, consider a private address (Tailscale) or a firewall rule.
+- **One user:** this server is built for one person and one NextDNS account. Don't share one server between people; give each their own.
+
+## Found a security problem?
+
+See [SECURITY.md](../SECURITY.md).

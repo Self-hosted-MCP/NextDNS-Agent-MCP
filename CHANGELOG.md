@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.2 (2026-10-16)
+
+- Docs at the level of Selfhost-Remote-Mail-MCP: a full security policy (what to report, how, timelines, scope), contributing guide, AGENTS.md (the code, the rules that must never break, setting it up for someone), a NOTICE file (license in plain words, not made by NextDNS, third-party licenses), and longer guides for the FAQ, troubleshooting, safety (what it doesn't protect against, what to do if something goes wrong, checked against MCP security guidance), privacy (what leaves your server, encryption, every stored file), every setting, updates (by hand, by itself, going back), languages and the Claude Desktop extension.
+- `.env.example` lists every setting, with comments. The bug form asks for more details.
+- NOTICE ships in the package, the Docker image and the extension.
+- The Railway one-click template is published: railway.com/deploy/nextdns-agent-mcp.
+
 ## 0.6.1 (2026-10-16)
 
 - Full docs, for any AI app: a new README, and guides for the Claude Desktop extension, setup on a computer, a hosting company and your own server, connecting 10 AI apps and any other MCP app, profiles and apps, examples, undo and backups, how it works, privacy, safety, settings and the settings page, updates, languages, FAQ, troubleshooting and roadmap. Screenshots and example charts.

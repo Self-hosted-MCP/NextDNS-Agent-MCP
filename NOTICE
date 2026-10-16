@@ -1,0 +1,53 @@
+NextDNS-Agent-MCP
+Copyright (c) 2026 s17sh70x2jfl031ag and NextDNS-Agent-MCP contributors
+Original project: https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP
+
+Licensed under the MIT License: see the file LICENSE.
+
+
+In plain words
+--------------
+
+You may use, study, change and share this project, also for money, in your
+own products. The only condition of the MIT License: keep the copyright line
+and the license text with every copy or substantial part.
+
+This summary helps you read the license; it doesn't replace it.
+
+
+Not made by NextDNS
+-------------------
+
+Not made by or affiliated with NextDNS. It uses the public NextDNS API with
+your own API key. "NextDNS" is a name and trademark of its owners; it is used
+here only to say truthfully which service this program works with.
+
+If you publish a changed version, please make clear that it is changed, and
+don't present it as the original project or as an official NextDNS product.
+That is a request, not an extra license term.
+
+
+Credit
+------
+
+The web pages show "NextDNS-Agent-MCP by s17sh70x2jfl031ag" in their footer.
+Keeping it is appreciated. To cite the project, use GitHub's "Cite this
+repository" button, which reads CITATION.cff.
+
+Parts of the login and settings pages come from Selfhost-Remote-Mail-MCP
+(https://github.com/s17sh70x2jfl031ag/Selfhost-Remote-Mail-MCP), by the same
+author, who releases them here under the MIT License.
+
+
+Third-party software
+--------------------
+
+No third-party files are included in this repository. The program uses these
+packages, installed separately under their own licenses:
+
+  - mcp (the Model Context Protocol Python SDK), MIT License
+  - httpx, BSD 3-Clause License
+  - cryptography, Apache License 2.0 or BSD 3-Clause License
+  - Pillow, MIT-CMU License
+
+Their dependencies are listed in uv.lock.

@@ -38,8 +38,26 @@ body:
       description: "`nextdns-agent-mcp version`, or the About tab on the settings page"
     validations:
       required: true
+  - type: input
+    id: os
+    attributes:
+      label: Computer or server
+      placeholder: "macOS 15, Windows 11, Ubuntu 24.04, Railway, ..."
   - type: textarea
     id: error
     attributes:
       label: Error message
+      description: What the AI app, the settings page, `nextdns-agent-mcp check` or the server's log said. Remove keys and profile IDs.
       render: text
+  - type: textarea
+    id: tried
+    attributes:
+      label: What you tried
+      description: For example the steps in docs/troubleshooting.md.
+  - type: checkboxes
+    id: private
+    attributes:
+      label: Before posting
+      options:
+        - label: I removed my API key, passphrase, profile IDs and anything from my DNS logs
+          required: true

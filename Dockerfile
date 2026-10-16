@@ -6,7 +6,7 @@ COPY --from=ghcr.io/astral-sh/uv:0.11.19 /uv /bin/uv
 WORKDIR /app
 
 # dependencies first, so code changes rebuild fast
-COPY pyproject.toml uv.lock README.md LICENSE ./
+COPY pyproject.toml uv.lock README.md LICENSE NOTICE ./
 RUN uv sync --frozen --no-install-project --no-dev
 
 COPY src ./src

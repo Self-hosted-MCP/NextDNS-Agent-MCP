@@ -14,7 +14,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-FILES = ["pyproject.toml", "uv.lock", "README.md", "LICENSE", "CHANGELOG.md"]   # what uv needs to install it
+FILES = ["pyproject.toml", "uv.lock", "README.md", "LICENSE", "NOTICE", "CHANGELOG.md"]   # what uv needs to install it
 SKIP = {"__pycache__", ".DS_Store"}
 
 

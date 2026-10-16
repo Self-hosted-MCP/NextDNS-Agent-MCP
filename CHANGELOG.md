@@ -2,7 +2,7 @@
 
 ## 0.8.0 (2026-10-16)
 
-- The license is now the Apache License 2.0 (it was MIT). It adds a patent grant and clear rules for the NOTICE file. Versions up to 0.7.0 stay available under MIT.
+- The license is now the Apache License 2.0, with a patent grant and clear rules for the NOTICE file.
 - NOTICE rewritten for Apache: the license in plain words, not made by NextDNS, credit and third-party licenses.
 
 ## 0.7.0 (2026-10-16)

@@ -203,5 +203,3 @@ GitHub's "Cite this repository" button uses [CITATION.cff](CITATION.cff).
 ## License
 
 [Apache License 2.0](LICENSE), with the notices in [NOTICE](NOTICE). Copyright 2026 s17sh70x2jfl031ag and NextDNS-Agent-MCP contributors.
-
-Versions up to 0.7.0 were released under the MIT License, and those copies stay under it.

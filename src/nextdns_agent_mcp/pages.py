@@ -547,7 +547,21 @@ def settings(csrf: str, flash: tuple[str, str] | None, key: dict, profiles: list
         changes_html = f'<div class="list">{rows}</div>'
     else:
         changes_html = f'<p class="empty">{esc(_("Nothing changed yet."))}</p>'
-    about_html = (f'<p class="lead">{esc(_("Version {v}.", v=about["version"]))} '
+    upd = about.get("update")
+    if upd and upd.get("newer"):
+        news = (f'<p class="msg tip">{ICON_ALERT}<span>'
+                + _('Version {v} is out. <a href="{url}" target="_blank" rel="noopener">What\'s new and how to update</a>.',
+                    v=esc(upd["latest"]), url=esc(upd["url"])) + "</span></p>")
+    elif upd:
+        news = f'<p class="hint">{esc(_("Up to date. Checked once a day with GitHub."))}</p>'
+    else:
+        news = ""
+    check_box = (f'<form method="post" action="/settings/save">{csrf_field(csrf)}<input type="hidden" name="kind" value="update">'
+                 f'<label class="choice"><input type="checkbox" name="UPDATE_CHECK" value="yes"'
+                 f'{" checked" if upd is not None else ""}{" disabled" if "UPDATE_CHECK" in locked else ""}>'
+                 f'<span class="addr">{esc(_("Check for new versions once a day (asks GitHub, sends nothing about you)"))}</span></label>'
+                 f'{_locked("UPDATE_CHECK" in locked)}<button class="quiet" type="submit">{esc(_("Save"))}</button></form>')
+    about_html = news + check_box + (f'<p class="lead" style="margin-top:18px">{esc(_("Version {v}.", v=about["version"]))} '
                   f'{esc(_("Connect an AI app with this address:"))} <code>{esc(about["public_url"])}/mcp</code></p>'
                   f'<form method="post" action="/settings/logout">{csrf_field(csrf)}'
                   f'<button class="quiet" type="submit">{esc(_("Sign out"))}</button></form>')

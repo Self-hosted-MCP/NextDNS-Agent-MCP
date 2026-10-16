@@ -76,6 +76,8 @@ class FakeNextDNS:
         self.logs: list[dict] = []
         self.next_id = 0
         self.stream_events: list[dict] = []
+        self.latest_tag: str | None = "v0.0.1"   # what the fake GitHub says is the newest release
+        self.github_calls = 0
         self.missing: set[str] = set()   # domains that don't exist
 
     def dns(self, pid: str, name: str, qtype: str) -> httpx.Response:
@@ -99,6 +101,12 @@ class FakeNextDNS:
         params = dict(request.url.params)
         path = request.url.raw_path.decode().split("?")[0]
         self.calls.append((request.method, path, params, body))
+        if request.url.host == "api.github.com":
+            self.github_calls += 1
+            if self.latest_tag is None:
+                return httpx.Response(503)
+            return httpx.Response(200, json={"tag_name": self.latest_tag,
+                                             "html_url": f"https://github.com/x/releases/tag/{self.latest_tag}"})
         if request.url.host == "dns.nextdns.io":
             return self.dns(path.strip("/"), params.get("name", ""), params.get("type", "A"))
         if request.headers.get("X-Api-Key") != KEY:
@@ -209,7 +217,7 @@ def fake(monkeypatch):
     monkeypatch.setattr(server, "TRANSPORT", httpx.MockTransport(api))
     monkeypatch.setattr(server, "SLEEP", lambda s: None)
     server._catalog_cache.clear()
-    for f in (server.CHANGES_FILE, server.CREATED_FILE):
+    for f in (server.CHANGES_FILE, server.CREATED_FILE, server.UPDATE_FILE):
         f.unlink(missing_ok=True)
     shutil.rmtree(server.BACKUP_DIR, ignore_errors=True)
     monkeypatch.setenv("NEXTDNS_API_KEY", KEY)

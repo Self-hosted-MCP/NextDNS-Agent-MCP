@@ -11,7 +11,7 @@ This is a program you run yourself. It has no account with us, no analytics and 
 | DNS test queries | NextDNS's DNS (`dns.nextdns.io/<profile>`), like a device using that profile | Only `check_domain` |
 | What the tools return | Your AI app | When it calls a tool |
 
-Nothing else. No update check, no telemetry, no crash reports. The Docker image, the extension and the code come from GitHub only when you install or update them.
+Nothing else: no telemetry, no crash reports. The only other request is the **update check**, if you turn it on (`UPDATE_CHECK`, off by default): once a day, a plain request to GitHub asking which release is newest, with no login and nothing about you. The Docker image, the extension and the code come from GitHub only when you install or update them.
 
 ## Encryption at a glance
 

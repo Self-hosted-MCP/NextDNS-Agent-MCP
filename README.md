@@ -103,6 +103,8 @@ More in [docs/how-it-works.md](docs/how-it-works.md).
 
 **Ask twice.** Deleting a profile, clearing logs and overwriting a profile from a backup need a double confirmation: the AI must ask you and get a yes first.
 
+**Updates, if you want them.** Get told when there's a new release, or let it update itself, official releases only. See [docs/updates.md](docs/updates.md).
+
 **A settings page.** On the web version, open `/settings` to paste your API key, choose what the AI may do with each profile, see and disconnect AI apps, undo changes, and manage backups.
 
 All 23 tools: [docs/tools.md](docs/tools.md). Ideas for what to ask: [docs/examples.md](docs/examples.md).

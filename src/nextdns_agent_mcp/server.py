@@ -12,6 +12,7 @@ Commands:
     stdio           run for one AI app on this computer (Claude Desktop, Claude Code, Codex, ...)
     serve           run as a web server with a passphrase login and a settings page (phone, claude.ai, ...)
     set-passphrase  choose the passphrase for the web version (only its hash is stored)
+    update          install the newest official release (on a computer, needs uv)
     check           test the API key and show what the AI may do with each profile (changes nothing)
     version         show the installed version
 
@@ -52,6 +53,10 @@ CREATED_FILE = STATE_DIR / "created.json"   # profiles this app made: it may cha
 PAGE_FILE = STATE_DIR / "settings.json"     # choices made on the settings page
 SECRETS_FILE = STATE_DIR / "secrets.json"   # the API key typed on the settings page, encrypted
 KEY_FILE = STATE_DIR / "secret.key"         # used only when NEXTDNS_SECRET_KEY isn't set
+UPDATE_FILE = STATE_DIR / "update.json"     # the last answer from GitHub about the newest release
+REPO = "s17sh70x2jfl031ag/NextDNS-Agent-MCP"
+RELEASES_API = f"https://api.github.com/repos/{REPO}/releases/latest"
+CHECK_EVERY = 24 * 3600
 
 logging.getLogger("httpx").setLevel(logging.WARNING)   # no line per request on stderr
 
@@ -64,10 +69,10 @@ SLEEP = time.sleep
 SETTINGS = ("NEXTDNS_API_KEY", "NEXTDNS_PROFILES", "NEXTDNS_DEFAULT_MODE", "NEXTDNS_DEFAULT_PROFILE",
             "NEXTDNS_READ_ONLY", "NEXTDNS_API_URL", "NEXTDNS_ALLOW_DELETE", "NEXTDNS_CHANGE_LIMIT",
             "NEXTDNS_APP_NAME", "NEXTDNS_SECRET_KEY", "LOGIN_HASH", "LOGIN_PASSPHRASE", "PUBLIC_URL", "HOST", "PORT",
-            "ALLOWED_REDIRECT_HOSTS", "SETTINGS_PAGE", "RENDER_EXTERNAL_URL", "RAILWAY_PUBLIC_DOMAIN")
+            "ALLOWED_REDIRECT_HOSTS", "SETTINGS_PAGE", "RENDER_EXTERNAL_URL", "RAILWAY_PUBLIC_DOMAIN", "UPDATE_CHECK")
 # What the settings page may set. The settings file and environment variables win over the page.
 PAGE_SETTINGS = ("NEXTDNS_PROFILES", "NEXTDNS_DEFAULT_MODE", "NEXTDNS_DEFAULT_PROFILE", "NEXTDNS_READ_ONLY",
-                 "NEXTDNS_ALLOW_DELETE")
+                 "NEXTDNS_ALLOW_DELETE", "UPDATE_CHECK")
 
 
 def read_env_file() -> dict[str, str]:
@@ -642,6 +647,9 @@ def profiles() -> str:
     with nextdns() as c:
         shown = visible_profiles(c, cfg)
     lines = []
+    news = update_line()
+    if news:
+        lines.append(news)
     if server_read_only(cfg):
         lines.append("READ-ONLY MODE (NEXTDNS_READ_ONLY=on): nothing can be changed.")
     default = (cfg.get("NEXTDNS_DEFAULT_PROFILE") or "").casefold()
@@ -1859,6 +1867,81 @@ def current_version() -> str:
         return "0.0.0"
 
 
+# ---------------------------------------------------------------- updates
+
+def version_tuple(v: str) -> tuple[int, ...]:
+    """'v0.6.2' -> (0, 6, 2). Anything that isn't a plain release number sorts lowest."""
+    m = re.fullmatch(r"v?(\d+)\.(\d+)\.(\d+)", (v or "").strip())
+    return tuple(int(x) for x in m.groups()) if m else (-1,)
+
+
+def update_check_on(cfg: dict | None = None) -> bool:
+    """UPDATE_CHECK from the settings file, a variable or the settings page. Off by default."""
+    return is_on((cfg or config()).get("UPDATE_CHECK"))
+
+
+def fetch_latest_release() -> dict:
+    """Asks GitHub which release is newest. Sends nothing about you: a plain request with no login."""
+    with httpx.Client(transport=TRANSPORT, timeout=10.0) as h:
+        r = h.get(RELEASES_API, headers={"Accept": "application/vnd.github+json",
+                                         "User-Agent": f"{APP}/{current_version()}"})
+        r.raise_for_status()
+        data = r.json()
+    return {"tag": data.get("tag_name", ""), "url": data.get("html_url", "")}
+
+
+def update_status(force: bool = False) -> dict | None:
+    """None when the update check is off. Otherwise {current, latest, url, newer}, asked at most once a day, and
+    again right after an update. A failed check counts as 'no news', so a GitHub hiccup never slows the tools."""
+    if not update_check_on():
+        return None
+    current = current_version()
+    cached = read_json(UPDATE_FILE, {})
+    if force or time.time() - cached.get("checked", 0) > CHECK_EVERY or cached.get("for") != current:
+        try:
+            cached = {**fetch_latest_release(), "checked": time.time(), "for": current}
+        except Exception as exc:
+            print(f"update check failed: {type(exc).__name__}", file=sys.stderr)
+            cached = {**cached, "checked": time.time(), "for": current}
+        try:
+            private_write(UPDATE_FILE, json.dumps(cached))
+        except OSError:
+            pass   # only a reminder: a failed save must never break the tools
+    latest = cached.get("tag", "")
+    return {"current": current, "latest": latest, "url": cached.get("url", ""),
+            "newer": bool(latest) and version_tuple(latest) > version_tuple(current)}
+
+
+def update_line() -> str:
+    status = update_status()
+    if status and status["newer"]:
+        return (f"Update available: {status['latest']} (this server runs {status['current']}). Tell the user once. "
+                f"What's new: {status['url']}")
+    return ""
+
+
+def run_update() -> None:
+    """The `update` command, on a computer: installs the newest official release with uv. Never unreleased code."""
+    try:
+        latest = fetch_latest_release()
+    except Exception as exc:
+        sys.exit(f"Couldn't ask GitHub for the newest release: {exc}")
+    current, tag = current_version(), latest["tag"]
+    if not tag or version_tuple(tag) <= version_tuple(current):
+        print(f"Up to date ({current}).")
+        return
+    import shutil
+    import subprocess
+    uv = shutil.which("uv")
+    if not uv:
+        sys.exit("uv isn't on this computer's PATH. Install uv, or update by hand: see docs/updates.md.")
+    print(f"Updating {current} -> {tag} ...")
+    result = subprocess.run([uv, "tool", "install", "--force", f"git+https://github.com/{REPO}@{tag}"])
+    if result.returncode:
+        sys.exit("The update failed; the version you had is still installed.")
+    print(f"Updated to {tag}. Restart your AI app (and serve, if it runs) to use it. What's new: {latest['url']}")
+
+
 def check() -> None:
     cfg = config()
     print(f"Settings file: {ENV_FILE}" + ("" if ENV_FILE.exists() else " (not there; using environment variables)"))
@@ -1922,6 +2005,8 @@ def main() -> None:
         serve()
     elif mode == "set-passphrase":
         set_passphrase()
+    elif mode == "update":
+        run_update()
     elif mode == "check":
         check()
     elif mode == "version":

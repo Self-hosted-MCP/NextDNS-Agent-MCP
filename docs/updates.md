@@ -7,14 +7,14 @@ Each release has a version tag (`vX.Y.Z`), notes on the [releases page](https://
 - **On GitHub:** **Watch → Custom → Releases** on the repository. GitHub emails you each new release.
 - **Your version:** `nextdns-agent-mcp version`, or the **About** tab on the settings page. Compare it with the [latest release](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest).
 
-The server itself never checks for updates: it doesn't contact anything but NextDNS.
+- **Let the server tell you:** turn on the update check, on the settings page (**About** tab) or with `UPDATE_CHECK=on`. Once a day it asks GitHub which release is newest (a plain request, nothing about you). When there's a new one, the About tab says so, and so does your AI app the next time it lists your profiles. Off by default.
 
 ## Update by hand
 
 | You run it | To update |
 |---|---|
 | Claude Desktop extension | Download the newest [`nextdns-agent-mcp.mcpb`](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest/download/nextdns-agent-mcp.mcpb) and open it |
-| On your computer (`uv tool`) | `uv tool upgrade nextdns-agent-mcp`, then restart your AI app (and `serve`, if you run it) |
+| On your computer (`uv tool`) | `nextdns-agent-mcp update` (installs the newest release, or says you're up to date), then restart your AI app (and `serve`, if you run it) |
 | With `uvx` | Add `--refresh` once to the command, so it fetches the newest code |
 | Docker Compose, ready-made image | `docker compose pull && docker compose up -d` |
 | Docker Compose, built here | `git pull && docker compose up -d --build` |
@@ -30,13 +30,70 @@ The server itself never checks for updates: it doesn't contact anything but Next
 - **Render:** an image service doesn't redeploy by itself. Use a deploy hook from a scheduled job, or update by hand.
 - Other hosts: look for "auto deploy" or "image updates" in their settings.
 
-### On your own server (Docker)
+### On your own server (Docker Compose)
 
-[Watchtower](https://github.com/containrrr/watchtower) can pull new images and restart the container. Point it at this one container only, and keep a backup of the `/data` volume.
+[`scripts/update.sh`](../scripts/update.sh) moves your copy to the newest official release and restarts it, only if there's a new one. Run it by hand, or every week with cron (`crontab -e`):
+
+```
+0 4 * * 1 cd /path/to/NextDNS-Agent-MCP && ./scripts/update.sh >> update.log 2>&1
+```
+
+It refuses to run if you changed tracked files in your copy. With the ready-made image instead of `build: .`, `docker compose pull && docker compose up -d` does the same, and [Watchtower](https://github.com/containrrr/watchtower) can do it for you.
+
+### Your own fork on a hosting company
+
+If your hosting company builds from your fork of this repository, the fork can follow official releases by itself: in your fork, turn on Actions, then add the repository variable `AUTO_UPDATE` = `on` (**Settings → Secrets and variables → Actions → Variables**). Every Monday, [the workflow](../.github/workflows/update-from-releases.yml) merges the newest release into your fork, and your host rebuilds. It never runs in the original repository, and it stops (without changing anything) if the release conflicts with your own changes.
 
 ### On your computer
 
-`uv tool upgrade --all` updates every tool you installed with uv. Run it now and then, or from a scheduled job (cron, launchd, Task Scheduler).
+`nextdns-agent-mcp update` installs the newest release with uv and does nothing if you're up to date. To run it every week:
+
+<details>
+<summary><b>Mac</b></summary>
+
+Save as `~/Library/LaunchAgents/com.nextdns-agent-mcp.update.plist` (replace `YOU` with your user name):
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key><string>com.nextdns-agent-mcp.update</string>
+  <key>ProgramArguments</key>
+  <array><string>/Users/YOU/.local/bin/nextdns-agent-mcp</string><string>update</string></array>
+  <key>StartCalendarInterval</key><dict><key>Weekday</key><integer>1</integer><key>Hour</key><integer>9</integer></dict>
+  <key>StandardOutPath</key><string>/tmp/nextdns-agent-mcp-update.log</string>
+</dict>
+</plist>
+```
+
+Turn it on with `launchctl bootstrap gui/$(id -u)` and that path.
+
+</details>
+
+<details>
+<summary><b>Linux</b></summary>
+
+`crontab -e`, then add:
+
+```
+0 9 * * 1 $HOME/.local/bin/nextdns-agent-mcp update >> $HOME/.cache/nextdns-agent-mcp-update.log 2>&1
+```
+
+</details>
+
+<details>
+<summary><b>Windows</b></summary>
+
+In Task Scheduler, create a weekly task that runs `nextdns-agent-mcp` with the argument `update`.
+
+</details>
+
+Restart your AI app after an update (and `serve`, if you run it).
+
+### Claude Desktop extension
+
+Download the newest `.mcpb` and open it again. The update check tells you when there's one.
 
 ## Staying on one version
 

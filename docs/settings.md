@@ -48,6 +48,12 @@ The round button at the top switches between light, dark and your device's look.
 
 `on`, `true`, `yes` and `1` all mean on.
 
+## Updates
+
+| Setting | What it does | Default |
+|---|---|---|
+| `UPDATE_CHECK` | on: once a day, ask GitHub which release is newest, and say so in the `profiles` tool and on the settings page (About tab). Sends nothing about you. Also a switch on the settings page | off |
+
 ## Web version (`serve`)
 
 | Setting | What it does | Default |

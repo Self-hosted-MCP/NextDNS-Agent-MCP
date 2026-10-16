@@ -48,7 +48,7 @@ uv run nextdns-agent-mcp help             # CLI
 uv run nextdns-agent-mcp check            # needs a real API key (see docs/settings.md)
 ```
 
-User commands: `stdio`, `serve`, `set-passphrase`, `check` (tests the key, lists profiles and modes, changes nothing), `version`.
+User commands: `stdio`, `serve`, `set-passphrase`, `update` (installs the newest official release with uv), `check` (tests the key, lists profiles and modes, changes nothing), `version`.
 
 The tests never touch a real account: `conftest.py` puts a fake NextDNS in `server.TRANSPORT` (it also answers the DNS-over-HTTPS host) and points `NEXTDNS_CONFIG_DIR` at a temporary folder. Never write a test that needs a real API key.
 
@@ -61,7 +61,7 @@ These are the product. A change that weakens one needs a very good reason and a 
 3. **Deletes and overwrites ask twice.** `delete_profile`, `clear_logs`, `restore_backup` over an existing profile, and undoing the creation of a profile go through `double_check()`: the first call changes nothing and returns a one-time code bound to that exact action, valid 5 minutes. The settings page may skip it only with its own confirm box ticked. `NEXTDNS_ALLOW_DELETE=off` turns deleting and clearing off. These tools carry `destructive_hint=True` so apps can ask too.
 4. **A brake.** `check_rate()` before every change: at most `NEXTDNS_CHANGE_LIMIT` a minute. At most 100 domains per list change.
 5. **Data is untrusted.** Domain names, log entries and blocklist descriptions are data, never instructions; the server's `INSTRUCTIONS` say so. No code path acts on text from NextDNS.
-6. **Private by default.** Never print or return the API key, `LOGIN_HASH`, tokens or the passphrase, and never show the linked-IP `updateToken`. OAuth tokens and sessions are stored only as `token_key()` fingerprints. The API key saved on the page is Fernet-encrypted (`NEXTDNS_SECRET_KEY` or `secret.key`). Files with anything personal are written owner-only through `private_write()`. Nothing is ever sent anywhere except NextDNS: no telemetry.
+6. **Private by default.** Never print or return the API key, `LOGIN_HASH`, tokens or the passphrase, and never show the linked-IP `updateToken`. OAuth tokens and sessions are stored only as `token_key()` fingerprints. The API key saved on the page is Fernet-encrypted (`NEXTDNS_SECRET_KEY` or `secret.key`). Files with anything personal are written owner-only through `private_write()`. Nothing is ever sent anywhere except NextDNS: no telemetry. The one exception is the update check the user turns on (`UPDATE_CHECK`, off by default): a plain request to GitHub's releases API, at most once a day. Keep it off by default.
 7. **`serve` never starts without a passphrase** of `MIN_PASSPHRASE` (6) or more characters, or a `LOGIN_HASH`. The login page always names the app and the return address before asking for the passphrase, and only offers profiles that aren't hidden. Five wrong passphrases in 15 minutes lock the login and the settings page.
 8. **The settings page stays locked down:** passphrase sign-in with the shared lockout, an HttpOnly + SameSite=Strict cookie (`__Host-` on HTTPS), sessions signed out when the passphrase changes, a CSRF token *and* a same-origin check on every POST, `pages.HEADERS` on every page, no scripts.
 9. **Check every API answer.** `api.Client.request()` raises on `errors` even with HTTP 200, retries politely on 429 and 5xx, and turns problems into plain words. Don't call `httpx` around it.
@@ -81,6 +81,7 @@ These are the product. A change that weakens one needs a very good reason and a 
 - Add or change behaviour → add or change a test in `tests/`. Run `uv run pytest -q` before you finish.
 - New tool → `READ`, `WRITE` or `DESTRUCTIVE` annotations, honestly; wrap changes in `changing()`; add it to `extension/manifest.json` and `docs/tools.md` (tests check both).
 - Changing user-visible behaviour → update the matching page in `docs/` in the same change. Plain, everyday language: short sentences, no jargon, no em dashes.
+- Updates only ever follow published releases (`releases/latest`): the `update` command, `scripts/update.sh` (Docker Compose) and `.github/workflows/update-from-releases.yml` (forks, opt-in with `AUTO_UPDATE=on`).
 - `.github/workflows/docker-image.yml` publishes the Docker image to ghcr.io and `.github/workflows/extension.yml` attaches the `.mcpb` to the release, both only for published releases (or a release tag run by hand), only in the original repository. Keep third-party actions pinned to a commit.
 - Hosting files (`Dockerfile`, `render.yaml`, `railway.json`, `docker-compose.yml`) are user setup paths. If you change one, re-check the matching `docs/setup-*.md`.
 - Don't add a database or new runtime dependencies without a strong reason.

@@ -199,7 +199,7 @@ def add_routes(server, provider: PassphraseOAuth, core) -> Sessions:
         except (ToolError, NextDNSError, ValueError) as exc:
             s["flash"] = ("error", str(exc))
         tab = {"key": "key", "profiles": "profiles", "safety": "safety", "app": "apps", "undo": "changes",
-               "backup": "backups"}.get(kind, "")
+               "backup": "backups", "update": "about"}.get(kind, "")
         return RedirectResponse("/settings" + (f"#{tab}" if tab else ""), status_code=303,
                                 headers={"Cache-Control": "no-store"})
 
@@ -250,6 +250,14 @@ def add_routes(server, provider: PassphraseOAuth, core) -> Sessions:
             if entry and entry.get("kind") == "create" and form.get("sure") != "yes":
                 raise ValueError("Tick the box to confirm deleting that profile.")
             return "ok", core.do_undo(str(form.get("change_id", "")), force=form.get("force") == "yes", owner=True)
+        if kind == "update":
+            if "UPDATE_CHECK" in locked:
+                raise ValueError("The update check is set in the settings file or hosting variables. Change it there.")
+            on = form.get("UPDATE_CHECK") == "yes"
+            core.save_page_settings({"UPDATE_CHECK": "on" if on else "off"})
+            if on:
+                core.update_status(force=True)
+            return "ok", "Update check on." if on else "Update check off."
         if kind == "backup":
             action = form.get("action")
             if action == "make":
@@ -301,7 +309,8 @@ def add_routes(server, provider: PassphraseOAuth, core) -> Sessions:
                  "change": g.get("change", False)} for cid, g in provider.grants.items()]
         changes = core.read_changes()[::-1][:40]
         return pages.settings(csrf, flash, key_info, profiles, problem, options, core.locked_settings(), apps,
-                              changes, {"version": core.current_version(), "public_url": provider.public_url},
+                              changes, {"version": core.current_version(), "public_url": provider.public_url,
+                                        "update": core.update_status()},
                               core.list_backups())
 
     return sessions

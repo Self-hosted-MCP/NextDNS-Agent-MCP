@@ -298,3 +298,15 @@ def test_backup_download_needs_sign_in(web):
     client, _ = web
     r = client.get("/settings/backup/abcdef", follow_redirects=False)
     assert r.status_code == 303
+
+
+def test_update_switch_on_the_page(web, fake, monkeypatch):
+    client, _ = web
+    monkeypatch.setattr(server, "current_version", lambda: "0.6.3")
+    fake.latest_tag = "v0.7.0"
+    csrf, page = sign_in(client)
+    assert "Check for new versions once a day" in page and "Version v0.7.0 is out" not in page
+    r = save(client, csrf, kind="update", UPDATE_CHECK="yes")
+    assert "Update check on" in r.text and "Version v0.7.0 is out" in r.text
+    r = save(client, csrf, kind="update")
+    assert "Update check off" in r.text and "Version v0.7.0 is out" not in r.text

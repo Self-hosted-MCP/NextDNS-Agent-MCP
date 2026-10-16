@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.7.0 (2026-10-16)
+
+- Update check, off by default: once a day the server asks GitHub which release is newest (nothing about you is sent) and says so in the `profiles` tool and on the settings page. Turn it on in the About tab or with `UPDATE_CHECK=on`.
+- `nextdns-agent-mcp update` installs the newest official release with uv, or says you're up to date. The docs show how to run it every week on Mac, Linux and Windows.
+- `scripts/update.sh` updates a Docker Compose copy to the newest release; forks can follow releases by themselves with the `update-from-releases` workflow (`AUTO_UPDATE=on`).
+
 ## 0.6.3 (2026-10-16)
 
 - The connect guide covers 16 more AI apps and agents, each with its settings from the app's own docs: Goose, Cline, Roo Code, Continue, Windsurf (Devin Desktop), Zed, LM Studio, OpenCode, Kiro, GitHub Copilot CLI, Amp, Warp, JetBrains AI Assistant, Qwen Code, Crush and Augment Code.

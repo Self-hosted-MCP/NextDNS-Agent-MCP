@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.6.1 (2026-10-16)
+
+- Full docs, for any AI app: a new README, and guides for the Claude Desktop extension, setup on a computer, a hosting company and your own server, connecting 10 AI apps and any other MCP app, profiles and apps, examples, undo and backups, how it works, privacy, safety, settings and the settings page, updates, languages, FAQ, troubleshooting and roadmap. Screenshots and example charts.
+- Issue forms (bug, question) and a private security report link. A checklist in AGENTS.md for AI agents setting it up for someone.
+- Tests check every link and heading anchor in the docs.
+
 ## 0.6.0 (2026-10-16)
 
 - Docs: tools (from the tools' own descriptions), safety, settings, running it, troubleshooting.

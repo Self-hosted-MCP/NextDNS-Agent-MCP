@@ -50,3 +50,33 @@ def test_docs_list_every_setting():
     text = (ROOT / "docs" / "settings.md").read_text()
     shown = {s for s in server.SETTINGS if s not in ("NEXTDNS_API_URL", "RENDER_EXTERNAL_URL", "RAILWAY_PUBLIC_DOMAIN")}
     assert all(f"`{s}`" in text or s in ("HOST", "PORT") for s in shown)
+
+
+def _anchors(text: str) -> set[str]:
+    """GitHub's heading anchors: lowercase, punctuation dropped, spaces to dashes."""
+    import re
+    out = set()
+    for line in text.splitlines():
+        if line.startswith("#"):
+            title = line.lstrip("#").strip().lower()
+            out.add(re.sub(r"[^\w\- ]", "", title).replace(" ", "-"))
+    return out
+
+
+def test_docs_links_work():
+    import re
+    files = [ROOT / "README.md", ROOT / "AGENTS.md", *sorted((ROOT / "docs").glob("*.md"))]
+    broken = []
+    for f in files:
+        text = f.read_text()
+        for target in re.findall(r"\]\(([^)\s]+)\)|(?:src|href)=\"([^\"]+)\"", text):
+            link = target[0] or target[1]
+            if link.startswith(("http://", "https://", "mailto:")):
+                continue
+            path, _, anchor = link.partition("#")
+            dest = (f.parent / path).resolve() if path else f
+            if not dest.exists():
+                broken.append(f"{f.name}: {link}")
+            elif anchor and dest.suffix == ".md" and anchor not in _anchors(dest.read_text()):
+                broken.append(f"{f.name}: {link} (no such heading)")
+    assert not broken, broken

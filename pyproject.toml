@@ -1,6 +1,6 @@
 [project]
 name = "nextdns-agent-mcp"
-version = "0.6.0"
+version = "0.6.1"
 description = "Your NextDNS account in Claude, ChatGPT and other AI apps: read stats and logs, change blocklists and settings, with safe limits per profile."
 readme = "README.md"
 license = "MIT"

@@ -1,6 +1,27 @@
 # Settings
 
-Settings come from three places. Each one wins over the one before:
+You can change the important things on the **settings page** (web version), and everything in the **settings file** or hosting variables.
+
+## The settings page
+
+Open `/settings` on the web version (`http://localhost:8766/settings` on a computer) and sign in with your passphrase.
+
+| Tab | What you do there |
+|---|---|
+| **API key** | Paste your NextDNS API key, with steps and links to find it. **Test and save** checks it first. Stored encrypted. |
+| **Profiles** | A mode for each profile (read and change, read only, hidden), and the default profile |
+| **Apps** | The AI apps connected over the internet: which profiles each may use, whether it may change things, **Disconnect** |
+| **Changes** | The change log, newest first, with **Undo** |
+| **Backups** | Back up a profile now, download, add a backup file, restore, make a new profile from one, delete |
+| **Safety** | Read-only mode, allow deletes (always asked twice), the mode for profiles not listed |
+| **About** | The version, the address AI apps connect to, **Sign out** |
+
+The round button at the top switches between light, dark and your device's look.
+
+## Where settings come from
+
+
+Each place wins over the one before:
 
 1. the **settings page** of the web version (profiles, default profile, read-only, allow deletes, and the API key),
 2. the **settings file**: `~/.config/nextdns-agent-mcp/.env` (or `NEXTDNS_ENV_FILE`),

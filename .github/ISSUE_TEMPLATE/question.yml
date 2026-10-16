@@ -1,0 +1,13 @@
+name: Question or idea
+description: Ask how to do something, or suggest a feature
+labels: [question]
+body:
+  - type: markdown
+    attributes:
+      value: "Issues are public: leave out your API key, profile IDs and anything from your logs."
+  - type: textarea
+    id: question
+    attributes:
+      label: Your question or idea
+    validations:
+      required: true

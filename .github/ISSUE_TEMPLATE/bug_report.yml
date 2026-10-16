@@ -1,0 +1,45 @@
+name: Something doesn't work
+description: A bug, an error, or something that behaves wrong
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: "Issues are public: leave out your API key, profile IDs, passphrase and anything from your logs."
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you asked the AI (or did on the settings page), and what happened instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: how
+    attributes:
+      label: How you run it
+      options:
+        - Claude Desktop extension
+        - On my computer (stdio)
+        - Web version on my computer
+        - Render
+        - Railway
+        - Docker on my own server
+        - Somewhere else
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: Your AI app
+      placeholder: "Claude Code, ChatGPT, Cursor, ..."
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: "`nextdns-agent-mcp version`, or the About tab on the settings page"
+    validations:
+      required: true
+  - type: textarea
+    id: error
+    attributes:
+      label: Error message
+      render: text

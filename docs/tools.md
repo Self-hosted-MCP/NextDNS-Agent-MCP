@@ -1,6 +1,14 @@
 # Tools
 
-What the AI can do, in the words it reads (each tool's own description). Every change is saved in the change log and can be undone, except clearing logs. See [safety](safety.md).
+23 tools, in three groups. Below each name is the tool's own description, the text your AI app reads, and what it takes. You don't call them yourself: ask in plain words ([examples.md](examples.md)) and the AI picks them.
+
+- **Look** tools only read. Apps can run them without asking.
+- **Change** tools change your NextDNS configuration. Each change is saved in the change log and can be undone ([undo-and-backups.md](undo-and-backups.md)).
+- **Asks twice first** tools delete or overwrite. The first call only explains and gives a one-time code; the AI must ask you before the second ([safety.md](safety.md#asked-twice)). They're marked as destructive, so most apps also ask on their own. `undo` is marked the same way, because undoing the creation of a profile deletes it.
+
+Dates accept ISO dates (`2026-10-16`), Unix times, or relative times like `-6h`, `-7d`, `-1M` and `now`. Profiles are named by ID or name; with a single visible profile, or a default one, it can be left out.
+
+<p align="center"><img src="images/chart-example.png" alt="A chart of allowed and blocked queries over a day" width="640"></p>
 
 ## Look
 

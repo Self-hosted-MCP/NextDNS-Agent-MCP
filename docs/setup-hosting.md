@@ -1,56 +1,57 @@
-# Running it
+# Setup on a hosting company
 
-First get your API key: sign in at [my.nextdns.io/account](https://my.nextdns.io/account), scroll to the bottom (API), show the key and copy it. More in the [official NextDNS API docs](https://nextdns.github.io/api/).
+Always on, so your phone and the Claude or ChatGPT website can use it any time. No terminal needed. About 10 minutes, a few dollars a month.
 
-## Claude Desktop extension
+Every option runs the ready-made image `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp` (or builds this repo's `Dockerfile`) and needs three things:
 
-Download `nextdns-agent-mcp.mcpb` from the latest release and open it. Claude Desktop asks for the API key, and whether Claude may change nothing (read only) or delete profiles and clear logs (always asked twice). It runs on your computer.
+1. **A passphrase**, `LOGIN_PASSPHRASE`, 6 characters or more. It locks the settings page and the login AI apps use.
+2. **A secret key**, `NEXTDNS_SECRET_KEY`: any long random text. It encrypts the API key you paste on the settings page. Never change it later (or paste the API key again if you do).
+3. **A disk at `/data`** that survives restarts. It keeps the saved API key, logins, the change log and backups. Without one it still works, but after each restart you paste the key and log in again, and undo history and backups are gone.
 
-## On your computer, for any AI app
+The server picks up its public address by itself on Render and Railway. Elsewhere, set `PUBLIC_URL` to it.
 
-Needs [uv](https://docs.astral.sh/uv/).
+## One click: Render
 
-```bash
-git clone https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP.git
-cd NextDNS-Agent-MCP
-mkdir -p ~/.config/nextdns-agent-mcp && cp .env.example ~/.config/nextdns-agent-mcp/.env
-```
+<a href="https://render.com/deploy?repo=https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render"></a>
 
-Put the key in that file, then check it with `uv run nextdns-agent-mcp check` and add the server to your AI app with the command `uv run --directory /path/to/NextDNS-Agent-MCP nextdns-agent-mcp stdio` (the README shows Claude Desktop and Claude Code).
+1. Press the button (or in Render: **New → Blueprint**, and pick this repository). It reads [`render.yaml`](../render.yaml).
+2. Fill in `LOGIN_PASSPHRASE`. Render makes `NEXTDNS_SECRET_KEY` for you and adds a 1 GB disk at `/data`.
+3. Render uses its smallest paid instance, because the free one can't keep a disk and falls asleep.
+4. When it's live, open `https://<your-app>.onrender.com/settings`, sign in, and paste your API key.
 
-## The web version (phone, claude.ai)
+## Railway
 
-It needs an HTTPS address. Once it runs:
+1. In Railway: **New project → Docker image**: `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest`. (Or **Deploy from GitHub repo** with this repository: it builds the `Dockerfile`, see [`railway.json`](../railway.json).)
+2. **Variables:** `LOGIN_PASSPHRASE`, `NEXTDNS_SECRET_KEY` (Railway can make one: `${{secret(64)}}`) and `PORT=8766`.
+3. **Volume:** add one, mounted at `/data`.
+4. **Settings → Networking:** generate a public domain on port 8766. **Healthcheck path:** `/health`.
+5. Open `https://<your-app>.up.railway.app/settings`, sign in, and paste your API key.
 
-1. Open `<address>/settings`, sign in with your passphrase, paste the API key, choose the profile modes.
-2. In Claude: Settings, Connectors, Add custom connector, with `<address>/mcp`. The login page opens: tick the profiles, choose whether it may change them, type the passphrase.
+## Any other hosting company
 
-Keep `/data` (or the config folder) on a disk that survives restarts: it holds the saved API key, logins, the change log and backups.
+Anything that runs a Docker image works (Fly.io, Koyeb, Northflank, Coolify, a NAS, ...):
 
-### Your own server (Docker)
+| What | Value |
+|---|---|
+| Image | `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest` (or a version, like `:0.6`) |
+| Port | 8766 (HTTP) |
+| Health check | `/health` |
+| Disk | at `/data` |
+| Variables | `LOGIN_PASSPHRASE`, `NEXTDNS_SECRET_KEY`, `PUBLIC_URL=https://your-address` |
 
-Point a domain at the server. Next to `docker-compose.yml`, make a `.env` with:
+The image works on amd64 and arm64.
 
-```
-NEXTDNS_DOMAIN=dns.example.com
-LOGIN_PASSPHRASE=your passphrase
-NEXTDNS_SECRET_KEY=some long random text
-```
+## Then
 
-Then `docker compose up -d`. Caddy gets the HTTPS certificate by itself.
+1. Open `https://your-address/settings`, sign in with your passphrase.
+2. **API key** tab: paste it, press **Test and save**.
+3. **Profiles** tab: choose what the AI may do with each one.
+4. Connect your AI apps to `https://your-address/mcp`: [connect-your-ai.md](connect-your-ai.md).
 
-### Render
+## Putting the API key in the variables instead
 
-New, Blueprint, pick this repo: it reads `render.yaml`, runs the ready-made image and keeps a 1 GB disk. Fill in `LOGIN_PASSPHRASE`. The address Render gives is picked up by itself.
+You can set `NEXTDNS_API_KEY` as a variable instead of pasting it on the settings page. It then shows on the page as "comes from the settings file or hosting variables" and can only be changed there. The same goes for every other setting ([settings.md](settings.md)).
 
-### Railway
+## Updates
 
-New project from this repo: it builds the `Dockerfile` (`railway.json`). Then add a volume mounted at `/data`, set `LOGIN_PASSPHRASE` and `NEXTDNS_SECRET_KEY`, and generate a public domain. The address is picked up by itself.
-
-### Your computer with a tunnel
-
-`uv run nextdns-agent-mcp serve` listens on port 8766. Point a tunnel (for example Cloudflare Tunnel) at it and set `PUBLIC_URL` to the tunnel's HTTPS address.
-
-## Updating
-
-Each release has a tag (`vX.Y.Z`), a Docker image `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp` (tags: the version, major.minor and `latest`) and the `.mcpb` file. See [CHANGELOG.md](../CHANGELOG.md).
+`latest` follows the newest release. Redeploy (or restart) to get it. To stay on one version, use a version tag like `:0.6.1`. See [updates.md](updates.md).

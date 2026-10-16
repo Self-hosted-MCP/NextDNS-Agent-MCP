@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """The Claude Desktop extension and hosting files stay in step with the code."""
 import asyncio
 import json

@@ -43,7 +43,7 @@ jobs:
           labels: |
             org.opencontainers.image.title=NextDNS-Agent-MCP
             org.opencontainers.image.description=Your NextDNS account in Claude, ChatGPT and other AI apps. Not made by NextDNS.
-            org.opencontainers.image.licenses=MIT
+            org.opencontainers.image.licenses=Apache-2.0
       - uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc   # v7.4.0, pinned
         with:
           context: .

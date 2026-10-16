@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """Languages for the web pages (coming with the settings page). Tool answers stay in English: the AI app reads them
 and talks to the user in the user's own language.
 

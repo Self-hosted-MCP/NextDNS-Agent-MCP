@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """A fake NextDNS API, so the tests never touch a real account."""
 import atexit
 import copy

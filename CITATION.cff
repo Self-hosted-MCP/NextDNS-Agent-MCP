@@ -5,7 +5,7 @@ type: software
 authors:
   - alias: "s17sh70x2jfl031ag"
 repository-code: "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"
-license: MIT
-version: 0.7.0
+license: Apache-2.0
+version: 0.8.0
 date-released: "2026-10-16"
 keywords: [mcp, nextdns, dns, self-hosted]

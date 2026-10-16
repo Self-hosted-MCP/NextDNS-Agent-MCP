@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """Builds the Claude Desktop extension: dist/nextdns-agent-mcp-<version>.mcpb.
 
     python3 scripts/build_mcpb.py

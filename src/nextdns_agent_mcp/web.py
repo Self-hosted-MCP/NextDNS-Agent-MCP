@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """The web version's pages: /login (AI apps connecting), /settings, /health and the icon.
 
 Forms post to /settings/save with a "kind": key, profiles, safety, app or undo. Every post needs the page's CSRF

@@ -45,4 +45,4 @@ The docs are for people who have never used a terminal. Use short sentences and 
 
 ## Credit
 
-By contributing you agree that your work is shared under the [MIT license](LICENSE). Keep the original credit (`LICENSE`, `NOTICE`, `CITATION.cff`) and add yourself to the changelog entry if you like.
+By contributing you agree that your work is shared under the [Apache License 2.0](LICENSE) (its section 5 covers contributions). Keep the original credit (`LICENSE`, `NOTICE`, `CITATION.cff`) and add yourself to the changelog entry if you like.

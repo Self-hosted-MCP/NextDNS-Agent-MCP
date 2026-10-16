@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """The web version: AI app logins, the settings page, and what each connected app may do."""
 import asyncio
 import re

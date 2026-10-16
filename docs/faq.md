@@ -3,7 +3,7 @@
 <details>
 <summary><b>Is it free?</b></summary>
 
-The software is free and open source (MIT license). Running it on your own computer is free. A hosting company costs a few dollars a month, paid to them. NextDNS and the AI app you use have their own plans.
+The software is free and open source (Apache License 2.0). Running it on your own computer is free. A hosting company costs a few dollars a month, paid to them. NextDNS and the AI app you use have their own plans.
 
 </details>
 

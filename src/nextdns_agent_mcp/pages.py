@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """The web pages: the login page AI apps open, and the settings page.
 
 Plain HTML and CSS, no scripts, nothing loaded from elsewhere (see HEADERS), so the pages work under a strict

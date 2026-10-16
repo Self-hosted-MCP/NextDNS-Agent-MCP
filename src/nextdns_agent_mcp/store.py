@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """Small files on disk: written whole and owner-only, locked while changed, secrets encrypted."""
 
 from __future__ import annotations

@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """Simple PNG charts drawn with Pillow: lines over time, or bars. No fonts or files needed from elsewhere."""
 
 from __future__ import annotations

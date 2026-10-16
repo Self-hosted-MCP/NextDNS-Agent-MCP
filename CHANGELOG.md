@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.8.0 (2026-10-16)
+
+- The license is now the Apache License 2.0 (it was MIT). It adds a patent grant and clear rules for the NOTICE file. Versions up to 0.7.0 stay available under MIT.
+- NOTICE rewritten for Apache: the license in plain words, not made by NextDNS, credit and third-party licenses.
+
 ## 0.7.0 (2026-10-16)
 
 - Update check, off by default: once a day the server asks GitHub which release is newest (nothing about you is sent) and says so in the `profiles` tool and on the settings page. Turn it on in the About tab or with `UPDATE_CHECK=on`.

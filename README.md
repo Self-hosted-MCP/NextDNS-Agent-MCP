@@ -5,7 +5,7 @@
 <p align="center"><b>Your NextDNS account inside any AI app or agent: Claude, ChatGPT, Codex, Cursor, Gemini, OpenClaw, Hermes, Goose and more.<br>On your computer and on your phone. Self-hosted, with undo for every change.</b></p>
 
 <p align="center">
-<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
+<a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="License: Apache 2.0"></a>
 <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+"></a>
 <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-server-black" alt="MCP server"></a>
 <a href="docs/connect-your-ai.md"><img src="https://img.shields.io/badge/works%20with-any%20MCP%20app-orange" alt="Works with any MCP app"></a>
@@ -202,4 +202,6 @@ GitHub's "Cite this repository" button uses [CITATION.cff](CITATION.cff).
 
 ## License
 
-[MIT](LICENSE). Copyright (c) 2026 s17sh70x2jfl031ag and NextDNS-Agent-MCP contributors.
+[Apache License 2.0](LICENSE), with the notices in [NOTICE](NOTICE). Copyright 2026 s17sh70x2jfl031ag and NextDNS-Agent-MCP contributors.
+
+Versions up to 0.7.0 were released under the MIT License, and those copies stay under it.

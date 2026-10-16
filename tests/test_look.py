@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """0.4: check_domain, watch_logs, chart, compare_profiles and backups."""
 import re
 

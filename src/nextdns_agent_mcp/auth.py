@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """Logins for the web version: AI apps connect with OAuth and you allow them with your passphrase; the settings page
 uses the same passphrase with a cookie.
 

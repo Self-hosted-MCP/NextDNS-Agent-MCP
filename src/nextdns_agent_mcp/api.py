@@ -1,4 +1,4 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """A small client for the NextDNS API (https://nextdns.github.io/api/).
 
 Every call sends the X-Api-Key header. Replies are JSON with `data` (and sometimes `meta`); problems come back as

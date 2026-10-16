@@ -1,7 +1,7 @@
-# SPDX-License-Identifier: MIT
+# SPDX-License-Identifier: Apache-2.0
 """nextdns-agent-mcp: your NextDNS account for AI assistants.
 
-Copyright (c) 2026 s17sh70x2jfl031ag and NextDNS-Agent-MCP contributors. MIT License, see LICENSE.
+Copyright (c) 2026 s17sh70x2jfl031ag and NextDNS-Agent-MCP contributors. Apache License 2.0, see LICENSE and NOTICE.
 Not made by or affiliated with NextDNS. It uses the public NextDNS API with your own API key.
 
 Reads profiles, stats and logs, and changes everything the NextDNS API allows. Each profile is full (read and

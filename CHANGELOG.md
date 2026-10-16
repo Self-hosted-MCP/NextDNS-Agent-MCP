@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.3 (2026-10-16)
+
+- The connect guide covers 16 more AI apps and agents, each with its settings from the app's own docs: Goose, Cline, Roo Code, Continue, Windsurf (Devin Desktop), Zed, LM Studio, OpenCode, Kiro, GitHub Copilot CLI, Amp, Warp, JetBrains AI Assistant, Qwen Code, Crush and Augment Code.
+
 ## 0.6.2 (2026-10-16)
 
 - Docs at the level of Selfhost-Remote-Mail-MCP: a full security policy (what to report, how, timelines, scope), contributing guide, AGENTS.md (the code, the rules that must never break, setting it up for someone), a NOTICE file (license in plain words, not made by NextDNS, third-party licenses), and longer guides for the FAQ, troubleshooting, safety (what it doesn't protect against, what to do if something goes wrong, checked against MCP security guidance), privacy (what leaves your server, encryption, every stored file), every setting, updates (by hand, by itself, going back), languages and the Claude Desktop extension.

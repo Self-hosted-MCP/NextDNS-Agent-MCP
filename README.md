@@ -2,7 +2,7 @@
 
 <h1 align="center">NextDNS-Agent-MCP</h1>
 
-<p align="center"><b>Your NextDNS account inside any AI app: Claude, ChatGPT, Codex, Cursor, Gemini and more.<br>On your computer and on your phone. Self-hosted, with undo for every change.</b></p>
+<p align="center"><b>Your NextDNS account inside any AI app or agent: Claude, ChatGPT, Codex, Cursor, Gemini, OpenClaw, Hermes, Goose and more.<br>On your computer and on your phone. Self-hosted, with undo for every change.</b></p>
 
 <p align="center">
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue" alt="License: MIT"></a>
@@ -151,7 +151,7 @@ More in [docs/safety.md](docs/safety.md) and [docs/privacy.md](docs/privacy.md).
    claude mcp add -s user nextdns -- nextdns-agent-mcp stdio
    ```
 
-   For Claude Desktop, ChatGPT, Codex, Cursor, VS Code, Gemini CLI, OpenClaw, Hermes Agent and any other MCP app, see [docs/connect-your-ai.md](docs/connect-your-ai.md).
+   For Claude Desktop, ChatGPT, Codex, Cursor, VS Code, Gemini CLI, OpenClaw, Hermes Agent, Goose, Cline, Roo Code, Continue, Windsurf, Zed, LM Studio, OpenCode, Kiro, GitHub Copilot CLI, Amp, Warp, JetBrains AI Assistant, Qwen Code, Crush, Augment Code and any other MCP app, see [docs/connect-your-ai.md](docs/connect-your-ai.md).
 
 7. Ask your AI: *"Use the NextDNS tools: what got blocked today?"*
 

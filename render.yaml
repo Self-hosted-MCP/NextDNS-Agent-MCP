@@ -1,0 +1,22 @@
+# On Render: the "Deploy to Render" button in the README, or "New > Blueprint" with this repo. Fill in the blank.
+# Runs the ready-made image of the newest official release, so nothing is built and unreleased code never runs.
+services:
+  - type: web
+    name: nextdns-agent-mcp
+    runtime: image
+    image:
+      url: ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest
+    # no plan line: Render then uses its smallest paid instance, which can keep a disk. The free plan can't keep
+    # a disk, so the saved API key, logins, change log and backups would be lost at each restart.
+    healthCheckPath: /health
+    disk:
+      name: data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: LOGIN_PASSPHRASE    # locks the login and settings pages (6+ characters)
+        sync: false
+      - key: NEXTDNS_SECRET_KEY  # encrypts the API key saved on the settings page; Render makes a random one
+        generateValue: true
+      - key: PORT                # the port Render sends web traffic to
+        value: "8766"

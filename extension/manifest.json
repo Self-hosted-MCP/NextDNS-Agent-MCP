@@ -1,0 +1,88 @@
+{
+  "manifest_version": "0.4",
+  "name": "nextdns-agent-mcp",
+  "display_name": "NextDNS Agent",
+  "version": "0.0.0",
+  "description": "Your NextDNS account inside Claude: stats, logs, blocklists, parental control and every setting, with undo.",
+  "long_description": "Puts your NextDNS account inside Claude Desktop. Ask in plain words: what got blocked today, why a site doesn't load, add a blocklist, block TikTok after 9 pm, compare two profiles, back up a profile. Every change can be undone. Deleting a profile or clearing logs always asks you twice first.\n\n**You need your NextDNS API key:** sign in at https://my.nextdns.io/account, scroll to the bottom (API), show the key and copy it. It stays on this computer and goes only to NextDNS.\n\nNot made by or affiliated with NextDNS. It uses the public NextDNS API: https://nextdns.github.io/api/",
+  "author": {
+    "name": "s17sh70x2jfl031ag",
+    "url": "https://github.com/s17sh70x2jfl031ag"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP.git"
+  },
+  "homepage": "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP",
+  "support": "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues",
+  "icon": "icon.png",
+  "server": {
+    "type": "uv",
+    "entry_point": "src/nextdns_agent_mcp/__main__.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--directory", "${__dirname}", "--frozen", "--no-dev", "--quiet", "nextdns-agent-mcp", "stdio"],
+      "env": {
+        "NEXTDNS_API_KEY": "${user_config.api_key}",
+        "NEXTDNS_READ_ONLY": "${user_config.read_only}",
+        "NEXTDNS_ALLOW_DELETE": "${user_config.allow_delete}",
+        "NEXTDNS_APP_NAME": "Claude Desktop"
+      }
+    }
+  },
+  "tools": [
+    {"name": "profiles", "description": "Lists your profiles and what Claude may do with each"},
+    {"name": "profile", "description": "Shows one profile's settings and setup addresses"},
+    {"name": "catalog", "description": "Lists the blocklists, trackers, services, categories and TLDs you can pick"},
+    {"name": "analytics", "description": "Counts: allowed and blocked, top domains, reasons, devices and more"},
+    {"name": "chart", "description": "Draws analytics as a picture"},
+    {"name": "logs", "description": "Searches the query log"},
+    {"name": "watch_logs", "description": "Watches queries live for a few seconds"},
+    {"name": "check_domain", "description": "Tells if a domain is blocked, and why"},
+    {"name": "compare_profiles", "description": "Shows what differs between two profiles"},
+    {"name": "list_entries", "description": "Changes the denylist and allowlist"},
+    {"name": "privacy", "description": "Changes blocklists and tracker protection"},
+    {"name": "security", "description": "Turns protections on or off, blocks TLDs"},
+    {"name": "parental_control", "description": "Blocks services and categories, recreation time, safe search"},
+    {"name": "rewrites", "description": "Adds or removes DNS rewrites"},
+    {"name": "profile_settings", "description": "Renames, logs, block page and performance settings"},
+    {"name": "create_profile", "description": "Makes a new profile, or a copy of one"},
+    {"name": "delete_profile", "description": "Deletes a profile, after asking you twice"},
+    {"name": "clear_logs", "description": "Clears a profile's logs, after asking you twice"},
+    {"name": "changes", "description": "Lists what was changed"},
+    {"name": "undo", "description": "Puts a profile back the way it was before a change"},
+    {"name": "backup", "description": "Saves a full copy of a profile"},
+    {"name": "backups", "description": "Lists the saved copies"},
+    {"name": "restore_backup", "description": "Puts a copy back, after asking you twice"}
+  ],
+  "tools_generated": false,
+  "keywords": ["nextdns", "dns", "privacy", "parental control", "adblock"],
+  "license": "MIT",
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "python": ">=3.11"
+    }
+  },
+  "user_config": {
+    "api_key": {
+      "type": "string",
+      "title": "NextDNS API key",
+      "description": "Sign in at my.nextdns.io/account, scroll to the bottom (API), show the key and copy it here.",
+      "sensitive": true,
+      "required": true
+    },
+    "read_only": {
+      "type": "boolean",
+      "title": "Read only",
+      "description": "On: Claude can look at everything but change nothing.",
+      "default": false
+    },
+    "allow_delete": {
+      "type": "boolean",
+      "title": "Allow deleting profiles and clearing logs",
+      "description": "Claude always asks you twice first. Off: it can never do these.",
+      "default": true
+    }
+  }
+}

@@ -1,0 +1,4 @@
+# Caddy gets and renews the HTTPS certificate for NEXTDNS_DOMAIN by itself.
+{$NEXTDNS_DOMAIN} {
+	reverse_proxy nextdns:8766
+}

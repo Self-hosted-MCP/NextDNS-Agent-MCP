@@ -1,0 +1,35 @@
+# Your own server. Gives you https://<NEXTDNS_DOMAIN> with a free certificate.
+#   1. Point a domain (e.g. dns.example.com) at your server's IP address.
+#   2. Make a .env file next to this one with:
+#        NEXTDNS_DOMAIN=dns.example.com
+#        LOGIN_PASSPHRASE=...           (6+ characters)
+#        NEXTDNS_SECRET_KEY=...         (any long random text; never change it later)
+#   3. docker compose up -d
+#   4. Open https://<NEXTDNS_DOMAIN>/settings, sign in, paste your NextDNS API key.
+services:
+  nextdns:
+    build: .   # or skip the build: image: ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      PUBLIC_URL: https://${NEXTDNS_DOMAIN:?set NEXTDNS_DOMAIN in .env}
+    volumes:
+      - nextdns-data:/data
+
+  caddy:
+    image: caddy:2.10
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      NEXTDNS_DOMAIN: ${NEXTDNS_DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+    depends_on:
+      - nextdns
+
+volumes:
+  nextdns-data:
+  caddy-data:

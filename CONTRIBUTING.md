@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for wanting to help. Bug reports, fixes, clearer docs and translations are all welcome.
+Thanks for wanting to help. NextDNS-Agent-MCP is free and open source under the [Apache License 2.0](LICENSE). Bug reports, fixes, clearer docs and translations are all welcome.
 
 ## Reporting a problem
 

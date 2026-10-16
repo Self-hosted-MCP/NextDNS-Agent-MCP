@@ -5,6 +5,8 @@
 <p align="center"><b>Your NextDNS account inside any AI app or agent: Claude, ChatGPT, Codex, Cursor, Gemini, OpenClaw, Hermes, Goose and more.<br>On your computer and on your phone. Self-hosted, with undo for every change.</b></p>
 
 <p align="center">
+<a href="#credits"><img src="https://img.shields.io/badge/-open%20source-brightgreen" alt="Open source"></a>
+<a href="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/stargazers"><img src="https://img.shields.io/github/stars/s17sh70x2jfl031ag/NextDNS-Agent-MCP?style=flat" alt="GitHub stars"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="License: Apache 2.0"></a>
 <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+"></a>
 <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-server-black" alt="MCP server"></a>
@@ -15,6 +17,8 @@
 <a href="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/s17sh70x2jfl031ag/NextDNS-Agent-MCP" alt="Latest release"></a>
 <a href="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/commits/main"><img src="https://img.shields.io/github/last-commit/s17sh70x2jfl031ag/NextDNS-Agent-MCP" alt="Last commit"></a>
 </p>
+
+<p align="center"><b>Free and open source under the Apache License 2.0.</b> Use it, fork it and change it, also in your own products, and keep the credit. See <a href="#credits">Credits</a>.</p>
 
 <p align="center">
 <a href="#quick-start-about-5-minutes">Quick start</a> ·
@@ -197,6 +201,12 @@ Issues are public, so leave out your API key, profile IDs and anything from your
 ## Credits
 
 NextDNS-Agent-MCP was made by [s17sh70x2jfl031ag](https://github.com/s17sh70x2jfl031ag). NextDNS is a trademark of its owners; this project isn't made by or affiliated with them.
+
+You're welcome to use, fork, change and build on it, also for money, under the [Apache License 2.0](LICENSE) and the notices in [NOTICE](NOTICE). In short:
+
+- Keep [LICENSE](LICENSE), [NOTICE](NOTICE) and the copyright lines with every copy you share.
+- Mark the files you changed as changed.
+- Keeping the credit in the page footers (*"NextDNS-Agent-MCP by s17sh70x2jfl031ag"*) is appreciated.
 
 GitHub's "Cite this repository" button uses [CITATION.cff](CITATION.cff).
 

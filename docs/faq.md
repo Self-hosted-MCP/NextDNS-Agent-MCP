@@ -8,6 +8,13 @@ The software is free and open source (Apache License 2.0). Running it on your ow
 </details>
 
 <details>
+<summary><b>Can I fork it or use it in my own product?</b></summary>
+
+Yes. It's open source under the [Apache License 2.0](../LICENSE): use it, change it and share it, also for money. Keep [LICENSE](../LICENSE), [NOTICE](../NOTICE) and the copyright lines, and mark the files you changed. To keep a fork up to date, see [updates.md](updates.md).
+
+</details>
+
+<details>
 <summary><b>Is this made by NextDNS?</b></summary>
 
 No. Not made by or affiliated with NextDNS. It uses the public NextDNS API with your own API key.

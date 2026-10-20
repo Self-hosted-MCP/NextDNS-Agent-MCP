@@ -17,8 +17,8 @@ import string
 from .i18n import LANG, _
 
 PROJECT = "NextDNS-Agent-MCP"
-PROJECT_URL = "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"
-AUTHOR = "s17sh70x2jfl031ag"
+PROJECT_URL = "https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP"
+AUTHOR = "Self-hosted MCP"
 
 # Never cached, never shown inside another site, never telling other sites where you came from.
 HEADERS = {

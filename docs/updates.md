@@ -1,11 +1,11 @@
 # Updates
 
-Each release has a version tag (`vX.Y.Z`), notes on the [releases page](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases), a Docker image and the Claude Desktop extension. What changed: [CHANGELOG.md](../CHANGELOG.md). Updates never touch your settings, change log or backups.
+Each release has a version tag (`vX.Y.Z`), notes on the [releases page](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/releases), a Docker image and the Claude Desktop extension. What changed: [CHANGELOG.md](../CHANGELOG.md). Updates never touch your settings, change log or backups.
 
 ## Know when there's an update
 
 - **On GitHub:** **Watch → Custom → Releases** on the repository. GitHub emails you each new release.
-- **Your version:** `nextdns-agent-mcp version`, or the **About** tab on the settings page. Compare it with the [latest release](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest).
+- **Your version:** `nextdns-agent-mcp version`, or the **About** tab on the settings page. Compare it with the [latest release](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/releases/latest).
 
 - **Let the server tell you:** turn on the update check, on the settings page (**About** tab) or with `UPDATE_CHECK=on`. Once a day it asks GitHub which release is newest (a plain request, nothing about you). When there's a new one, the About tab says so, and so does your AI app the next time it lists your profiles. Off by default.
 
@@ -13,12 +13,12 @@ Each release has a version tag (`vX.Y.Z`), notes on the [releases page](https://
 
 | You run it | To update |
 |---|---|
-| Claude Desktop extension | Download the newest [`nextdns-agent-mcp.mcpb`](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest/download/nextdns-agent-mcp.mcpb) and open it |
+| Claude Desktop extension | Download the newest [`nextdns-agent-mcp.mcpb`](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/releases/latest/download/nextdns-agent-mcp.mcpb) and open it |
 | On your computer (`uv tool`) | `nextdns-agent-mcp update` (installs the newest release, or says you're up to date), then restart your AI app (and `serve`, if you run it) |
 | With `uvx` | Add `--refresh` once to the command, so it fetches the newest code |
 | Docker Compose, ready-made image | `docker compose pull && docker compose up -d` |
 | Docker Compose, built here | `git pull && docker compose up -d --build` |
-| `docker run` | `docker pull ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest`, then remove and start the container again (same volume) |
+| `docker run` | `docker pull ghcr.io/self-hosted-mcp/nextdns-agent-mcp:latest`, then remove and start the container again (same volume) |
 | Render | **Manual Deploy** (it pulls `:latest` again) |
 | Railway | **Redeploy** the service (it pulls `:latest` again) |
 
@@ -97,14 +97,14 @@ Download the newest `.mcpb` and open it again. The update check tells you when t
 
 ## Staying on one version
 
-Use a version tag instead of `latest`: `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:0.6.2` (exact) or `:0.6` (the newest 0.6.x). With uv: `uv tool install --force git+https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP@v0.6.2`.
+Use a version tag instead of `latest`: `ghcr.io/self-hosted-mcp/nextdns-agent-mcp:0.6.2` (exact) or `:0.6` (the newest 0.6.x). With uv: `uv tool install --force git+https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP@v0.6.2`.
 
 ## Going back
 
 Something wrong after an update? Go back to the version before:
 
 - Docker, Render, Railway: change the image tag to the previous version (for example `:0.6.1`) and redeploy.
-- `uv tool`: `uv tool install --force git+https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP@v0.6.1`.
-- Extension: open the previous release's `.mcpb` from the [releases page](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases).
+- `uv tool`: `uv tool install --force git+https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP@v0.6.1`.
+- Extension: open the previous release's `.mcpb` from the [releases page](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/releases).
 
-Your data folder works with the version before too. Then tell us what went wrong in an [issue](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues/new?template=bug_report.yml).
+Your data folder works with the version before too. Then tell us what went wrong in an [issue](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues/new?template=bug_report.yml).

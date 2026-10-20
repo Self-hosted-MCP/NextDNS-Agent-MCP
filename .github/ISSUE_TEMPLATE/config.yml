@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: Report a security problem, privately
-    url: https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/security/advisories/new
+    url: https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/security/advisories/new
     about: Please don't open a public issue for a vulnerability.

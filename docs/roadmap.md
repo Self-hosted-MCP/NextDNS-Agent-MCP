@@ -1,6 +1,6 @@
 # Roadmap
 
-Ideas, not promises. Tell us what you'd use in a [question](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues/new?template=question.yml).
+Ideas, not promises. Tell us what you'd use in a [question](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues/new?template=question.yml).
 
 - **Languages** for the web pages, like the 20 of Selfhost-Remote-Mail-MCP.
 - **A background service** on a computer (start the web version at login), and a `setup` command that asks for the key and passphrase.

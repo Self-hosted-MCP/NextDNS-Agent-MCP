@@ -229,4 +229,4 @@ Something else uses port 8766, maybe another copy of the server. Stop it, or set
 
 ## Still stuck?
 
-Open an [issue](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues/new?template=bug_report.yml) with what you asked, what happened, how you run it, and `nextdns-agent-mcp version`. Leave out your API key, passphrase, profile IDs and anything from your logs.
+Open an [issue](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues/new?template=bug_report.yml) with what you asked, what happened, how you run it, and `nextdns-agent-mcp version`. Leave out your API key, passphrase, profile IDs and anything from your logs.

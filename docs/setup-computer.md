@@ -12,7 +12,7 @@ Free, about 5 minutes, on Mac, Windows or Linux. Any AI app on the same computer
 ## 2. Install the server
 
 ```bash
-uv tool install git+https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP
+uv tool install git+https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP
 ```
 
 This gives you the `nextdns-agent-mcp` command. Check it with `nextdns-agent-mcp version`.

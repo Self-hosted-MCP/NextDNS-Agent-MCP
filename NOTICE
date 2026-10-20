@@ -1,6 +1,6 @@
 NextDNS-Agent-MCP
 Copyright 2026 s17sh70x2jfl031ag and NextDNS-Agent-MCP contributors
-Original project: https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP
+Original project: https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
 use this project except in compliance with the License. You may obtain a copy
@@ -37,12 +37,12 @@ This summary helps you read the license; it doesn't replace it.
 Credit
 ------
 
-The web pages show "NextDNS-Agent-MCP by s17sh70x2jfl031ag" in their footer.
+The web pages show "NextDNS-Agent-MCP by Self-hosted MCP" in their footer.
 Keeping it is appreciated. To cite the project, use GitHub's "Cite this
 repository" button, which reads CITATION.cff.
 
 Parts of the login and settings pages come from Selfhost-Remote-Mail-MCP
-(https://github.com/s17sh70x2jfl031ag/Selfhost-Remote-Mail-MCP), by the same
+(https://github.com/Self-hosted-MCP/Selfhost-Remote-Mail-MCP), by the same
 author, who releases them here under the Apache License 2.0.
 
 

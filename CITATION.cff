@@ -3,9 +3,9 @@ message: "If you use or build on this project, please credit it like this."
 title: "NextDNS-Agent-MCP"
 type: software
 authors:
-  - alias: "s17sh70x2jfl031ag"
-repository-code: "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"
+  - name: "Self-hosted MCP"
+repository-code: "https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP"
 license: Apache-2.0
-version: 0.8.0
-date-released: "2026-10-16"
+version: 0.8.1
+date-released: "2026-10-20"
 keywords: [mcp, nextdns, dns, self-hosted]

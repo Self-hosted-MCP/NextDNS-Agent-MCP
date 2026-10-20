@@ -58,5 +58,5 @@ def test_update_command(fake, monkeypatch, capsys):
     monkeypatch.setattr(subprocess, "run", lambda cmd: ran.append(cmd) or subprocess.CompletedProcess(cmd, 0))
     server.run_update()
     assert ran == [["/usr/bin/uv", "tool", "install", "--force",
-                    "git+https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP@v0.7.0"]]
+                    "git+https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP@v0.7.0"]]
     assert "Updated to v0.7.0" in capsys.readouterr().out

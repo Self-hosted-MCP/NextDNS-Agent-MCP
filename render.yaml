@@ -5,7 +5,7 @@ services:
     name: nextdns-agent-mcp
     runtime: image
     image:
-      url: ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest
+      url: ghcr.io/self-hosted-mcp/nextdns-agent-mcp:latest
     # no plan line: Render then uses its smallest paid instance, which can keep a disk. The free plan can't keep
     # a disk, so the saved API key, logins, change log and backups would be lost at each restart.
     healthCheckPath: /health

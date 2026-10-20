@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.8.1 (2026-10-20)
+
+- The project moved to the [Self-hosted MCP](https://github.com/Self-hosted-MCP) organisation on GitHub. Old links to the repository redirect to the new one.
+- The ready-made Docker image is now `ghcr.io/self-hosted-mcp/nextdns-agent-mcp`. If you run the old image name, switch to this one to keep getting updates.
+- `scripts/update.sh` follows GitHub's redirects.
+
 ## 0.8.0 (2026-10-16)
 
 - The license is now the Apache License 2.0, with a patent grant and clear rules for the NOTICE file.

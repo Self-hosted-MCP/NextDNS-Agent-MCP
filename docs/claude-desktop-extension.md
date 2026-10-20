@@ -9,7 +9,7 @@ The quickest way on Claude Desktop: one file, no terminal and no settings file. 
 
 ## Install
 
-1. Download [`nextdns-agent-mcp.mcpb`](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest/download/nextdns-agent-mcp.mcpb) from the latest release.
+1. Download [`nextdns-agent-mcp.mcpb`](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/releases/latest/download/nextdns-agent-mcp.mcpb) from the latest release.
 2. Open it (double-click), or in Claude Desktop go to **Settings → Extensions** and drag it in.
 3. Claude Desktop shows what it is and asks for:
 

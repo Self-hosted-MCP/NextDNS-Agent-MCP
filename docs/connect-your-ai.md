@@ -49,7 +49,7 @@ Menus in these apps change often. If a label below doesn't match what you see, l
 | [Augment Code](#augment-code) | Yes | Yes |
 | [Any other MCP app](#any-other-mcp-app) | Usually | If it supports MCP login (OAuth) |
 
-**What we tested:** both ways end to end with the official MCP Python client against a real NextDNS account (the login page, tokens, listing the tools and calling them), and the Claude Desktop extension installed in Claude Desktop. The app-by-app settings below follow each app's own documentation as of October 2026, linked under each app; tell us in an [issue](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues/new?template=question.yml) if one has changed.
+**What we tested:** both ways end to end with the official MCP Python client against a real NextDNS account (the login page, tokens, listing the tools and calling them), and the Claude Desktop extension installed in Claude Desktop. The app-by-app settings below follow each app's own documentation as of October 2026, linked under each app; tell us in an [issue](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues/new?template=question.yml) if one has changed.
 
 ## Before you start: the command path
 
@@ -426,7 +426,7 @@ Over the internet (**+ Add remote MCP**): `"nextdns": { "type": "http", "url": "
 Without installing anything, `uvx` can run it straight from GitHub:
 
 ```json
-{ "command": "uvx", "args": ["--from", "git+https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP", "nextdns-agent-mcp", "stdio"],
+{ "command": "uvx", "args": ["--from", "git+https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP", "nextdns-agent-mcp", "stdio"],
   "env": { "NEXTDNS_API_KEY": "your-key" } }
 ```
 

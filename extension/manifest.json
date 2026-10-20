@@ -6,15 +6,15 @@
   "description": "Your NextDNS account inside Claude: stats, logs, blocklists, parental control and every setting, with undo.",
   "long_description": "Puts your NextDNS account inside Claude Desktop. Ask in plain words: what got blocked today, why a site doesn't load, add a blocklist, block TikTok after 9 pm, compare two profiles, back up a profile. Every change can be undone. Deleting a profile or clearing logs always asks you twice first.\n\n**You need your NextDNS API key:** sign in at https://my.nextdns.io/account, scroll to the bottom (API), show the key and copy it. It stays on this computer and goes only to NextDNS.\n\nNot made by or affiliated with NextDNS. It uses the public NextDNS API: https://nextdns.github.io/api/",
   "author": {
-    "name": "s17sh70x2jfl031ag",
-    "url": "https://github.com/s17sh70x2jfl031ag"
+    "name": "Self-hosted MCP",
+    "url": "https://github.com/Self-hosted-MCP"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP.git"
+    "url": "https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP.git"
   },
-  "homepage": "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP",
-  "support": "https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues",
+  "homepage": "https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP",
+  "support": "https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues",
   "icon": "icon.png",
   "server": {
     "type": "uv",

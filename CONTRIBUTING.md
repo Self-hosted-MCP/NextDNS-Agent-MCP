@@ -33,7 +33,7 @@ Trying a change against a real account? Make a test profile in NextDNS, set your
 2. Run the tests, push to `main`, wait for the **Tests** workflow to pass.
 3. Tag it `vX.Y.Z` and publish a GitHub Release with the changelog notes.
 
-Publishing the release builds the Docker image (`ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp`, tags: version, major.minor, `latest`) and the Claude Desktop extension, checked with Anthropic's validator and attached to the release. Nothing reaches the image or the extension before that.
+Publishing the release builds the Docker image (`ghcr.io/self-hosted-mcp/nextdns-agent-mcp`, tags: version, major.minor, `latest`) and the Claude Desktop extension, checked with Anthropic's validator and attached to the release. Nothing reaches the image or the extension before that.
 
 ## Translations
 

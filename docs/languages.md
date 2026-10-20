@@ -27,7 +27,7 @@ The pages will pick the language from the browser once languages ship. Choosing 
 
 ## Add a language
 
-Open a [question](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues/new?template=question.yml) to say which one, or send a pull request with the file.
+Open a [question](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues/new?template=question.yml) to say which one, or send a pull request with the file.
 
 An AI coding agent can make it. Ask it:
 

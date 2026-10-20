@@ -6,16 +6,16 @@
 
 <p align="center">
 <a href="#credits"><img src="https://img.shields.io/badge/-open%20source-brightgreen" alt="Open source"></a>
-<a href="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/stargazers"><img src="https://img.shields.io/github/stars/s17sh70x2jfl031ag/NextDNS-Agent-MCP?style=flat" alt="GitHub stars"></a>
+<a href="https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/stargazers"><img src="https://img.shields.io/github/stars/Self-hosted-MCP/NextDNS-Agent-MCP?style=flat" alt="GitHub stars"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-Apache%202.0-blue" alt="License: Apache 2.0"></a>
 <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="Python 3.11+"></a>
 <a href="https://modelcontextprotocol.io"><img src="https://img.shields.io/badge/MCP-server-black" alt="MCP server"></a>
 <a href="docs/connect-your-ai.md"><img src="https://img.shields.io/badge/works%20with-any%20MCP%20app-orange" alt="Works with any MCP app"></a>
 <a href="#choose-how-to-run-it"><img src="https://img.shields.io/badge/self--hosted-computer%20%C2%B7%20cloud%20%C2%B7%20server-green" alt="Self-hosted"></a>
 <br>
-<a href="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/actions/workflows/tests.yml"><img src="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
-<a href="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/s17sh70x2jfl031ag/NextDNS-Agent-MCP" alt="Latest release"></a>
-<a href="https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/commits/main"><img src="https://img.shields.io/github/last-commit/s17sh70x2jfl031ag/NextDNS-Agent-MCP" alt="Last commit"></a>
+<a href="https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/actions/workflows/tests.yml"><img src="https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/actions/workflows/tests.yml/badge.svg" alt="Tests"></a>
+<a href="https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/releases/latest"><img src="https://img.shields.io/github/v/release/Self-hosted-MCP/NextDNS-Agent-MCP" alt="Latest release"></a>
+<a href="https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/commits/main"><img src="https://img.shields.io/github/last-commit/Self-hosted-MCP/NextDNS-Agent-MCP" alt="Last commit"></a>
 </p>
 
 <p align="center"><b>Free and open source under the Apache License 2.0.</b> Use it, fork it and change it, also in your own products, and keep the credit. See <a href="#credits">Credits</a>.</p>
@@ -84,7 +84,7 @@ More in [docs/how-it-works.md](docs/how-it-works.md).
 | **2. A hosting company** | Railway, Render or any host that runs Docker | Always | A few dollars a month | [setup-hosting.md](docs/setup-hosting.md) |
 | **3. Your own server** | Any server with Docker | Always | Free to cheap | [setup-own-server.md](docs/setup-own-server.md) |
 
-<a href="https://railway.com/deploy/nextdns-agent-mcp"><img src="https://railway.com/button.svg" alt="Deploy on Railway"></a> <a href="https://render.com/deploy?repo=https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render"></a>
+<a href="https://railway.com/deploy/nextdns-agent-mcp"><img src="https://railway.com/button.svg" alt="Deploy on Railway"></a> <a href="https://render.com/deploy?repo=https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP"><img src="https://render.com/images/deploy-to-render-button.svg" alt="Deploy to Render"></a>
 
 > [!TIP]
 > Not sure? Start with **1**, free, on your computer. Move to **2** when you want it on your phone all the time.
@@ -131,7 +131,7 @@ More in [docs/safety.md](docs/safety.md) and [docs/privacy.md](docs/privacy.md).
 2. Install the server:
 
    ```bash
-   uv tool install git+https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP
+   uv tool install git+https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP
    ```
 
 3. Get your API key: sign in at [my.nextdns.io/account](https://my.nextdns.io/account), scroll to the bottom (**API**), show the key and copy it.
@@ -192,21 +192,21 @@ More in [docs/safety.md](docs/safety.md) and [docs/privacy.md](docs/privacy.md).
 | You want to | Go to |
 |---|---|
 | Fix a problem yourself | [Troubleshooting](docs/troubleshooting.md) |
-| Report a bug | [Something doesn't work](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues/new?template=bug_report.yml) |
-| Ask a question or share an idea | [Question](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/issues/new?template=question.yml) |
-| Report a security problem, privately | [Private report](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/security/advisories/new) ([SECURITY.md](SECURITY.md)) |
+| Report a bug | [Something doesn't work](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues/new?template=bug_report.yml) |
+| Ask a question or share an idea | [Question](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/issues/new?template=question.yml) |
+| Report a security problem, privately | [Private report](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/security/advisories/new) ([SECURITY.md](SECURITY.md)) |
 
 Issues are public, so leave out your API key, profile IDs and anything from your logs.
 
 ## Credits
 
-NextDNS-Agent-MCP was made by [s17sh70x2jfl031ag](https://github.com/s17sh70x2jfl031ag). NextDNS is a trademark of its owners; this project isn't made by or affiliated with them.
+NextDNS-Agent-MCP was made by [Self-hosted MCP](https://github.com/Self-hosted-MCP). NextDNS is a trademark of its owners; this project isn't made by or affiliated with them.
 
 You're welcome to use, fork, change and build on it, also for money, under the [Apache License 2.0](LICENSE) and the notices in [NOTICE](NOTICE). In short:
 
 - Keep [LICENSE](LICENSE), [NOTICE](NOTICE) and the copyright lines with every copy you share.
 - Mark the files you changed as changed.
-- Keeping the credit in the page footers (*"NextDNS-Agent-MCP by s17sh70x2jfl031ag"*) is appreciated.
+- Keeping the credit in the page footers (*"NextDNS-Agent-MCP by Self-hosted MCP"*) is appreciated.
 
 GitHub's "Cite this repository" button uses [CITATION.cff](CITATION.cff).
 

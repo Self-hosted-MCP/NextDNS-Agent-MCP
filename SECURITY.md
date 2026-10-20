@@ -8,14 +8,14 @@ Only the newest release gets security fixes. Every way of running it (the Docker
 
 | Version | Security fixes |
 |---|---|
-| Latest release ([see Releases](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/releases/latest)) | Yes |
+| Latest release ([see Releases](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/releases/latest)) | Yes |
 | Any older version | No, please update |
 
 ## Reporting a problem
 
 Please **don't** open a public issue, discussion or pull request for a security problem.
 
-1. Go to the **Security** tab of this repository and click **[Report a vulnerability](https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP/security/advisories/new)**. Only the maintainer sees it.
+1. Go to the **Security** tab of this repository and click **[Report a vulnerability](https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP/security/advisories/new)**. Only the maintainer sees it.
 2. Tell me:
    - the version (`nextdns-agent-mcp version`, or the About tab on the settings page) and how you run it (computer, extension, Docker, hosting company)
    - what you found and which part of the code it's in, if you know

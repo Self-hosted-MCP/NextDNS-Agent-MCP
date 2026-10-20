@@ -10,7 +10,7 @@ The repository has a [`docker-compose.yml`](../docker-compose.yml) that runs the
 2. Get the files:
 
    ```bash
-   git clone https://github.com/s17sh70x2jfl031ag/NextDNS-Agent-MCP.git
+   git clone https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP.git
    ```
 
    ```bash
@@ -36,7 +36,7 @@ The repository has a [`docker-compose.yml`](../docker-compose.yml) that runs the
 5. Open `https://dns.example.com/settings`, sign in, paste your API key, choose the profile modes.
 6. Connect your AI apps to `https://dns.example.com/mcp`: [connect-your-ai.md](connect-your-ai.md).
 
-`docker-compose.yml` builds the image from the repository. To use the ready-made one instead, replace `build: .` with `image: ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest`.
+`docker-compose.yml` builds the image from the repository. To use the ready-made one instead, replace `build: .` with `image: ghcr.io/self-hosted-mcp/nextdns-agent-mcp:latest`.
 
 ## Behind your own reverse proxy
 
@@ -47,7 +47,7 @@ docker run -d --name nextdns-agent-mcp --restart unless-stopped \
   -p 127.0.0.1:8766:8766 -v nextdns-data:/data \
   -e LOGIN_PASSPHRASE='your passphrase' -e NEXTDNS_SECRET_KEY='long random text' \
   -e PUBLIC_URL=https://dns.example.com \
-  ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest
+  ghcr.io/self-hosted-mcp/nextdns-agent-mcp:latest
 ```
 
 The proxy must pass the `Host` header through: the `/mcp` address only accepts requests for the host in `PUBLIC_URL` (and localhost).

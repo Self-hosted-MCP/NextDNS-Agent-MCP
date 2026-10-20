@@ -17,7 +17,7 @@ permissions:
 
 jobs:
   mcpb:
-    if: github.repository == 's17sh70x2jfl031ag/NextDNS-Agent-MCP'
+    if: github.repository == 'Self-hosted-MCP/NextDNS-Agent-MCP'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:

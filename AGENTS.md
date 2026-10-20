@@ -105,7 +105,7 @@ When a person asks you to set this server up for them, follow this. The user gui
 
 **The host must have** (check each one; say clearly if a host can't do one)
 
-- the image `ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest` (or a build of the `Dockerfile`), with traffic to port 8766,
+- the image `ghcr.io/self-hosted-mcp/nextdns-agent-mcp:latest` (or a build of the `Dockerfile`), with traffic to port 8766,
 - HTTPS and `PUBLIC_URL` set to the exact public address, without `/mcp` (Render and Railway set it themselves),
 - a persistent volume at `/data`,
 - always on, exactly one instance.

@@ -8,7 +8,7 @@
 #   4. Open https://<NEXTDNS_DOMAIN>/settings, sign in, paste your NextDNS API key.
 services:
   nextdns:
-    build: .   # or skip the build: image: ghcr.io/s17sh70x2jfl031ag/nextdns-agent-mcp:latest
+    build: .   # or skip the build: image: ghcr.io/self-hosted-mcp/nextdns-agent-mcp:latest
     restart: unless-stopped
     env_file: .env
     environment:

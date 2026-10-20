@@ -54,7 +54,7 @@ PAGE_FILE = STATE_DIR / "settings.json"     # choices made on the settings page
 SECRETS_FILE = STATE_DIR / "secrets.json"   # the API key typed on the settings page, encrypted
 KEY_FILE = STATE_DIR / "secret.key"         # used only when NEXTDNS_SECRET_KEY isn't set
 UPDATE_FILE = STATE_DIR / "update.json"     # the last answer from GitHub about the newest release
-REPO = "s17sh70x2jfl031ag/NextDNS-Agent-MCP"
+REPO = "Self-hosted-MCP/NextDNS-Agent-MCP"
 RELEASES_API = f"https://api.github.com/repos/{REPO}/releases/latest"
 CHECK_EVERY = 24 * 3600
 

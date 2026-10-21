@@ -34,12 +34,14 @@ import time
 from contextlib import contextmanager
 from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
+from typing import Annotated
 from urllib.parse import urlparse
 
 import httpx
 from mcp.server.mcpserver import MCPServer
 from mcp.server.mcpserver.exceptions import ToolError
 from mcp_types import ToolAnnotations
+from pydantic import Field
 
 from .api import Client, NextDNSError, part
 from .store import editing, private_write, read_json, secret_box
@@ -606,8 +608,12 @@ OAUTH_FILE = STATE_DIR / "oauth.json"
 
 def build_server(remote: bool) -> MCPServer:
     """remote: the web version, with the passphrase login and the settings page."""
+    try:
+        app_version = version(APP)
+    except PackageNotFoundError:
+        app_version = ""
     if not remote:
-        return MCPServer("nextdns", instructions=INSTRUCTIONS, title="NextDNS Agent")
+        return MCPServer("nextdns", instructions=INSTRUCTIONS, title="NextDNS Agent", version=app_version)
     from mcp.server.auth.settings import AuthSettings, ClientRegistrationOptions, RevocationOptions
     from . import auth, web
     global PROVIDER
@@ -617,7 +623,7 @@ def build_server(remote: bool) -> MCPServer:
     provider = PROVIDER = auth.PassphraseOAuth(public, hosts, OAUTH_FILE,
                                                lambda passphrase: auth.passphrase_ok(passphrase, env_settings()))
     server = MCPServer(
-        "nextdns", instructions=INSTRUCTIONS, title="NextDNS Agent",
+        "nextdns", instructions=INSTRUCTIONS, title="NextDNS Agent", version=app_version,
         auth_server_provider=provider,
         auth=AuthSettings(
             issuer_url=public,
@@ -638,6 +644,32 @@ mcp = build_server(MODE == "serve")
 
 READ = ToolAnnotations(read_only_hint=True, open_world_hint=False)
 WRITE = ToolAnnotations(read_only_hint=False, destructive_hint=False, idempotent_hint=True, open_world_hint=False)
+
+# What each tool input means, sent to AI apps in the tool's schema.
+ProfileArg = Annotated[str | None, Field(description=(
+    "The profile's ID or name. Leave empty for the only profile, or the default one."))]
+ProfileNameArg = Annotated[str, Field(description="The profile's ID or name.")]
+ConfirmCodeArg = Annotated[str | None, Field(description=(
+    "Leave empty on the first call. After the user says yes, pass the code the first call gave "
+    "you."))]
+DeviceArg = Annotated[str | None, Field(description=(
+    "Only this device: a device ID from the devices report, or __UNIDENTIFIED__."))]
+CursorArg = Annotated[str | None, Field(description=(
+    "The cursor from the last answer, to get the next page."))]
+ToDateArg = Annotated[str | None, Field(description=(
+    "Where to stop, not included: an ISO date, Unix time or relative like -1h. Empty means now."))]
+LogStatusArg = Annotated[str | None, Field(description=(
+    "Only queries with this result: blocked, allowed, default or error."))]
+LogSearchArg = Annotated[str | None, Field(description=(
+    "Part of a domain to look for: facebook matches facebook.com, fbcdn.net and others."))]
+RawArg = Annotated[bool, Field(description=(
+    "true: every query. false (default): only the useful ones (A, AAAA and HTTPS, without "
+    "repeats)."))]
+ReportArg = Annotated[str, Field(description=(
+    "Which report: status, domains, reasons, ips, devices, protocols, queryTypes, ipVersions, "
+    "dnssec, encryption or destinations."))]
+DomainStatusArg = Annotated[str | None, Field(description=(
+    "domains report only: just blocked, allowed or default queries."))]
 
 
 @mcp.tool(annotations=READ)
@@ -665,7 +697,12 @@ def profiles() -> str:
 
 
 @mcp.tool(annotations=READ)
-def profile(profile: str | None = None, section: str | None = None) -> str:
+def profile(
+    profile: ProfileArg = None,
+    section: Annotated[str | None, Field(description=(
+        "Show just one part in full: security, privacy, parental_control, denylist, allowlist, "
+        "rewrites, settings or setup. Empty shows a summary with long lists cut short."))] = None,
+) -> str:
     """One profile's settings in a clear summary: security, privacy, parental control, denylist, allowlist,
     rewrites, settings and setup (the addresses devices use).
     profile: ID or name (default: the only or default profile).
@@ -720,7 +757,14 @@ def catalog_line(kind: str, x: dict) -> str:
 
 
 @mcp.tool(annotations=READ)
-def catalog(kind: str, search: str | None = None, limit: int = 50) -> str:
+def catalog(
+    kind: Annotated[str, Field(description=(
+        "What to list: blocklists, natives (native tracking protection), services (apps "
+        "parental control can block), categories or tlds."))],
+    search: Annotated[str | None, Field(description=(
+        "Words to look for in the IDs, names and descriptions."))] = None,
+    limit: Annotated[int, Field(description="How many to show.")] = 50,
+) -> str:
     """What NextDNS offers to choose from, with the IDs the change tools take.
     kind: blocklists (privacy blocklists), natives (native tracking protection: apple, samsung, ...), services
     (apps parental control can block: tiktok, instagram, ...), categories (porn, gambling, ...) or tlds.
@@ -781,10 +825,25 @@ def report_label(report: str, row: dict) -> str:
 
 
 @mcp.tool(annotations=READ)
-def analytics(report: str = "status", profile: str | None = None, from_date: str = "-7d", to_date: str | None = None,
-              device: str | None = None, status: str | None = None, root: bool = False,
-              destination: str = "countries", limit: int = 10, series: bool = False, interval: str | None = None,
-              timezone: str | None = None, cursor: str | None = None) -> str:
+def analytics(
+    report: ReportArg = "status",
+    profile: ProfileArg = None,
+    from_date: Annotated[str, Field(description=(
+        "Where to start, included: an ISO date, Unix time or relative like -6h, -7d or -1M."))] = "-7d",
+    to_date: ToDateArg = None,
+    device: DeviceArg = None,
+    status: DomainStatusArg = None,
+    root: Annotated[bool, Field(description=(
+        "domains report only: true groups subdomains under their root domain."))] = False,
+    destination: Annotated[str, Field(description="destinations report only: countries or gafam.")] = "countries",
+    limit: Annotated[int, Field(description="How many rows, 1 to 500.")] = 10,
+    series: Annotated[bool, Field(description="true: counts over time, split by interval and timezone.")] = False,
+    interval: Annotated[str | None, Field(description=(
+        "With series: the step between points, like 1h, 1d or 3600 (seconds)."))] = None,
+    timezone: Annotated[str | None, Field(description=(
+        "With series: the time zone for the steps, like Europe/Lisbon."))] = None,
+    cursor: CursorArg = None,
+) -> str:
     """Query counts from a profile's analytics.
     report: status (allowed / blocked / default), domains, reasons (why blocked), ips, devices, protocols,
     queryTypes, ipVersions, dnssec, encryption or destinations.
@@ -831,9 +890,21 @@ def analytics(report: str = "status", profile: str | None = None, from_date: str
 
 
 @mcp.tool(annotations=READ)
-def logs(profile: str | None = None, search: str | None = None, status: str | None = None, device: str | None = None,
-         from_date: str | None = None, to_date: str | None = None, limit: int = 50, raw: bool = False,
-         oldest_first: bool = False, cursor: str | None = None, download_link: bool = False) -> str:
+def logs(
+    profile: ProfileArg = None,
+    search: LogSearchArg = None,
+    status: LogStatusArg = None,
+    device: DeviceArg = None,
+    from_date: Annotated[str | None, Field(description=(
+        "Where to start, included: an ISO date, Unix time or relative like -6h, -7d or -1M."))] = None,
+    to_date: ToDateArg = None,
+    limit: Annotated[int, Field(description="How many queries, 10 to 1000.")] = 50,
+    raw: RawArg = False,
+    oldest_first: Annotated[bool, Field(description="true: oldest first instead of newest first.")] = False,
+    cursor: CursorArg = None,
+    download_link: Annotated[bool, Field(description=(
+        "true: give a link to download the whole log instead of showing it."))] = False,
+) -> str:
     """Search a profile's query log, newest first.
     search: part of a domain (facebook matches facebook.com, fbcdn.net, ...). status: blocked, allowed, default or
     error. device: device ID or __UNIDENTIFIED__. from_date / to_date: ISO, Unix time or relative (-1h, -1d).
@@ -874,7 +945,16 @@ def clean_domain(value: str) -> str:
 
 
 @mcp.tool(annotations=WRITE)
-def list_entries(list_name: str, action: str, domains: list[str], profile: str | None = None) -> str:
+def list_entries(
+    list_name: Annotated[str, Field(description=(
+        "Which list: denylist (always blocked) or allowlist (never blocked)."))],
+    action: Annotated[str, Field(description=(
+        "add, remove, on (turn an entry back on) or off (keep it, but not in use)."))],
+    domains: Annotated[list[str], Field(description=(
+        "Up to 100 domains, like example.com. A domain also covers its subdomains; links are "
+        "cut down to the domain."))],
+    profile: ProfileArg = None,
+) -> str:
     """Change a profile's denylist (always blocked) or allowlist (never blocked). A domain also covers its
     subdomains.
     list_name: denylist or allowlist. action: add, remove, on (turn an entry back on) or off (keep it, but not
@@ -950,10 +1030,22 @@ def clean_ids(values: list[str] | None) -> list[str]:
 
 
 @mcp.tool(annotations=WRITE)
-def privacy(profile: str | None = None, add_blocklists: list[str] | None = None,
-            remove_blocklists: list[str] | None = None, add_natives: list[str] | None = None,
-            remove_natives: list[str] | None = None, disguised_trackers: bool | None = None,
-            allow_affiliate: bool | None = None) -> str:
+def privacy(
+    profile: ProfileArg = None,
+    add_blocklists: Annotated[list[str] | None, Field(description=(
+        "Blocklist IDs to turn on, like oisd or hagezi-pro (from catalog, kind blocklists)."))] = None,
+    remove_blocklists: Annotated[list[str] | None, Field(description="Blocklist IDs to turn off.")] = None,
+    add_natives: Annotated[list[str] | None, Field(description=(
+        "Native tracking protection to turn on, like apple, samsung, windows or xiaomi (from "
+        "catalog, kind natives)."))] = None,
+    remove_natives: Annotated[list[str] | None, Field(description=(
+        "Native tracking protection to turn off."))] = None,
+    disguised_trackers: Annotated[bool | None, Field(description=(
+        "true or false: block third-party trackers disguised as first-party. Leave empty to "
+        "keep it as it is."))] = None,
+    allow_affiliate: Annotated[bool | None, Field(description=(
+        "true or false: let affiliate and tracking links work. Leave empty to keep it as it is."))] = None,
+) -> str:
     """Change a profile's privacy settings. IDs come from catalog (kind blocklists or natives).
     add_blocklists / remove_blocklists: blocklist IDs, like oisd or hagezi-pro.
     add_natives / remove_natives: native tracking protection, like apple, samsung, windows, xiaomi.
@@ -1023,8 +1115,18 @@ def pick_switches(names: list[str] | None, known: dict, labels: dict | None = No
 
 
 @mcp.tool(annotations=WRITE)
-def security(profile: str | None = None, turn_on: list[str] | None = None, turn_off: list[str] | None = None,
-             block_tlds: list[str] | None = None, unblock_tlds: list[str] | None = None) -> str:
+def security(
+    profile: ProfileArg = None,
+    turn_on: Annotated[list[str] | None, Field(description=(
+        "Protection keys to switch on, like threatIntelligenceFeeds, aiThreatDetection, "
+        "googleSafeBrowsing, cryptojacking, typosquatting or nrd. profile with section security"
+        " lists them all."))] = None,
+    turn_off: Annotated[list[str] | None, Field(description=(
+        "Protection keys to switch off, same names as turn_on."))] = None,
+    block_tlds: Annotated[list[str] | None, Field(description=(
+        "Top-level domains to block entirely, like zip or xyz (from catalog, kind tlds)."))] = None,
+    unblock_tlds: Annotated[list[str] | None, Field(description="Top-level domains to stop blocking.")] = None,
+) -> str:
     """Change a profile's security protections. profile(section='security') shows them with their keys.
     turn_on / turn_off: switch keys like threatIntelligenceFeeds, aiThreatDetection, googleSafeBrowsing,
     cryptojacking, dnsRebinding, idnHomographs, typosquatting, dga, nrd (newly registered domains), ddns, parking,
@@ -1085,13 +1187,39 @@ def clock(value: str) -> str:
 
 
 @mcp.tool(annotations=WRITE)
-def parental_control(profile: str | None = None, block_services: list[str] | None = None,
-                     unblock_services: list[str] | None = None, block_categories: list[str] | None = None,
-                     unblock_categories: list[str] | None = None, pause: list[str] | None = None,
-                     resume: list[str] | None = None, allow_in_recreation: list[str] | None = None,
-                     block_in_recreation: list[str] | None = None, recreation_times: dict[str, str] | None = None,
-                     recreation_timezone: str | None = None, safe_search: bool | None = None,
-                     youtube_restricted_mode: bool | None = None, block_bypass: bool | None = None) -> str:
+def parental_control(
+    profile: ProfileArg = None,
+    block_services: Annotated[list[str] | None, Field(description=(
+        "Apps and sites to block, like tiktok, instagram or fortnite (from catalog, kind "
+        "services)."))] = None,
+    unblock_services: Annotated[list[str] | None, Field(description=(
+        "Services to take off the block list."))] = None,
+    block_categories: Annotated[list[str] | None, Field(description=(
+        "Categories to block, like porn, gambling, dating, piracy, gaming, social-networks or "
+        "video-streaming."))] = None,
+    unblock_categories: Annotated[list[str] | None, Field(description=(
+        "Categories to take off the block list."))] = None,
+    pause: Annotated[list[str] | None, Field(description=(
+        "Blocked services or categories to keep in the list but stop blocking for now."))] = None,
+    resume: Annotated[list[str] | None, Field(description=(
+        "Paused services or categories to start blocking again."))] = None,
+    allow_in_recreation: Annotated[list[str] | None, Field(description=(
+        "Blocked services or categories to allow during recreation time."))] = None,
+    block_in_recreation: Annotated[list[str] | None, Field(description=(
+        "Services or categories to keep blocked during recreation time too."))] = None,
+    recreation_times: Annotated[dict[str, str] | None, Field(description=(
+        "Recreation hours per day, like {\"monday\": \"18:00-20:00\", \"saturday\": \"10:00-22:00\"}. "
+        "\"\" removes a day."))] = None,
+    recreation_timezone: Annotated[str | None, Field(description=(
+        "The time zone for recreation_times, like Europe/Lisbon. Needed once times are set."))] = None,
+    safe_search: Annotated[bool | None, Field(description=(
+        "true or false: force safe search on search engines. Leave empty to keep it as it is."))] = None,
+    youtube_restricted_mode: Annotated[bool | None, Field(description=(
+        "true or false: force YouTube's restricted mode. Leave empty to keep it as it is."))] = None,
+    block_bypass: Annotated[bool | None, Field(description=(
+        "true or false: block VPNs, proxies and other ways around the filter. Leave empty to "
+        "keep it as it is."))] = None,
+) -> str:
     """Change a profile's parental control. IDs come from catalog (kind services or categories).
     block_services / unblock_services: apps and sites like tiktok, instagram, fortnite.
     block_categories / unblock_categories: porn, gambling, dating, piracy, gaming, social-networks, video-streaming.
@@ -1197,7 +1325,14 @@ def parental_control(profile: str | None = None, block_services: list[str] | Non
 
 
 @mcp.tool(annotations=WRITE)
-def rewrites(action: str, name: str, content: str | None = None, profile: str | None = None) -> str:
+def rewrites(
+    action: Annotated[str, Field(description="add or remove.")],
+    name: Annotated[str, Field(description=(
+        "The domain to answer for, like nas.home or printer.example.com."))],
+    content: Annotated[str | None, Field(description=(
+        "For add: the IPv4 or IPv6 address, or the domain, to answer with."))] = None,
+    profile: ProfileArg = None,
+) -> str:
     """Add or remove a DNS rewrite: answer a domain with your own IP address or another domain (for example a
     home server name).
     action: add or remove. name: the domain, like nas.home or printer.example.com.
@@ -1261,11 +1396,32 @@ def retention_seconds(value: str) -> int:
 
 
 @mcp.tool(annotations=WRITE)
-def profile_settings(profile: str | None = None, rename: str | None = None, logs: bool | None = None,
-                     log_retention: str | None = None, log_location: str | None = None,
-                     drop_client_ips: bool | None = None, drop_domains: bool | None = None,
-                     block_page: bool | None = None, ecs: bool | None = None, cache_boost: bool | None = None,
-                     cname_flattening: bool | None = None, web3: bool | None = None) -> str:
+def profile_settings(
+    profile: ProfileArg = None,
+    rename: Annotated[str | None, Field(description="A new name for the profile.")] = None,
+    logs: Annotated[bool | None, Field(description=(
+        "true or false: keep a query log. Leave empty to keep it as it is."))] = None,
+    log_retention: Annotated[str | None, Field(description=(
+        "How long logs are kept: 1 hour, 6 hours, 1 day, 1 week, 1 month, 3 months, 6 months, 1"
+        " year or 2 years."))] = None,
+    log_location: Annotated[str | None, Field(description="Where logs are stored: us, eu, gb or ch.")] = None,
+    drop_client_ips: Annotated[bool | None, Field(description=(
+        "true or false: leave client IP addresses out of the logs. Leave empty to keep it as it"
+        " is."))] = None,
+    drop_domains: Annotated[bool | None, Field(description=(
+        "true or false: leave domains out of the logs. Leave empty to keep it as it is."))] = None,
+    block_page: Annotated[bool | None, Field(description=(
+        "true or false: show a block page instead of failing. Leave empty to keep it as it is."))] = None,
+    ecs: Annotated[bool | None, Field(description=(
+        "true or false: send EDNS Client Subnet, for faster CDNs. Leave empty to keep it as it "
+        "is."))] = None,
+    cache_boost: Annotated[bool | None, Field(description=(
+        "true or false: keep answers cached longer. Leave empty to keep it as it is."))] = None,
+    cname_flattening: Annotated[bool | None, Field(description=(
+        "true or false: answer with the final address. Leave empty to keep it as it is."))] = None,
+    web3: Annotated[bool | None, Field(description=(
+        "true or false: resolve Web3 domains like .eth. Leave empty to keep it as it is."))] = None,
+) -> str:
     """Change a profile's settings. Leave out what shouldn't change.
     rename: a new name for the profile. logs: keep a query log (true / false).
     log_retention: how long logs are kept: 1 hour, 6 hours, 1 day, 1 week, 1 month, 3 months, 6 months, 1 year or
@@ -1341,7 +1497,14 @@ def apply_sections(c: Client, pid: str, saved: dict) -> list[str]:
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=False, idempotent_hint=False,
                                       open_world_hint=False))
-def create_profile(name: str, copy_from: str | None = None, start: str = "recommended") -> str:
+def create_profile(
+    name: Annotated[str, Field(description="The new profile's name, like Kids or Guest network.")],
+    copy_from: Annotated[str | None, Field(description=(
+        "An existing profile (ID or name) to copy every setting and list from."))] = None,
+    start: Annotated[str, Field(description=(
+        "Without copy_from: recommended (the usual protections and NextDNS's recommended "
+        "blocklist) or empty (everything off)."))] = "recommended",
+) -> str:
     """Make a new NextDNS profile (for another device, a child, a guest network, ...). This app may change the
     profiles it makes.
     copy_from: an existing profile (ID or name) to copy every setting and list from.
@@ -1391,7 +1554,10 @@ DESTRUCTIVE = ToolAnnotations(read_only_hint=False, destructive_hint=True, idemp
 
 
 @mcp.tool(annotations=DESTRUCTIVE)
-def delete_profile(profile: str, confirm_code: str | None = None) -> str:
+def delete_profile(
+    profile: ProfileNameArg,
+    confirm_code: ConfirmCodeArg = None,
+) -> str:
     """DELETES a whole profile and its logs. Devices using it stop being filtered. Only when the user asked.
     Needs a double confirmation: the first call deletes nothing and gives a code; ask the user, and only after
     they say yes, call again with confirm_code. undo can make a new profile with the same settings and lists, but
@@ -1420,7 +1586,10 @@ def delete_profile(profile: str, confirm_code: str | None = None) -> str:
 
 
 @mcp.tool(annotations=DESTRUCTIVE)
-def clear_logs(profile: str, confirm_code: str | None = None) -> str:
+def clear_logs(
+    profile: ProfileNameArg,
+    confirm_code: ConfirmCodeArg = None,
+) -> str:
     """DELETES every entry in a profile's query log, for good (no undo). Only when the user asked.
     Needs a double confirmation: the first call deletes nothing and gives a code; ask the user, and only after
     they say yes, call again with confirm_code."""
@@ -1442,7 +1611,10 @@ def clear_logs(profile: str, confirm_code: str | None = None) -> str:
 
 
 @mcp.tool(annotations=READ)
-def changes(limit: int = 20, profile: str | None = None) -> str:
+def changes(
+    limit: Annotated[int, Field(description="How many changes to show.")] = 20,
+    profile: Annotated[str | None, Field(description="Only changes to this profile (ID or name).")] = None,
+) -> str:
     """What was changed through this app, newest first, with the IDs undo takes.
     profile: only this profile (ID or name). limit: how many (default 20)."""
     rows = read_changes()
@@ -1464,7 +1636,13 @@ def changes(limit: int = 20, profile: str | None = None) -> str:
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True, idempotent_hint=False,
                                       open_world_hint=False))
-def undo(change_id: str, force: bool = False, confirm_code: str | None = None) -> str:
+def undo(
+    change_id: Annotated[str, Field(description="The ID of the change to undo, from changes.")],
+    force: Annotated[bool, Field(description=(
+        "true: put the old state back even if the profile changed since, which also drops those"
+        " later changes."))] = False,
+    confirm_code: ConfirmCodeArg = None,
+) -> str:
     """Put a profile back the way it was before one change (IDs from changes). Only when the user asked.
     If the profile was changed again since (in the NextDNS dashboard or by a later change), undo stops and says
     what differs; force=true puts the old state back anyway, which also drops those later changes.
@@ -1573,7 +1751,11 @@ def answer_of(reply: dict) -> tuple[list[str], str]:
 
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=True, open_world_hint=True))
-def check_domain(domain: str, profile: str | None = None) -> str:
+def check_domain(
+    domain: Annotated[str, Field(description=(
+        "The domain to check, like tiktok.com. A link is cut down to its domain."))],
+    profile: ProfileArg = None,
+) -> str:
     """Is a domain blocked by this profile, and why? Makes a real DNS query through the profile (like a device
     would; it shows in the profile's log), then looks at the denylist, allowlist and the log for the reason.
     domain: like tiktok.com or a link (cut down to the domain)."""
@@ -1629,8 +1811,14 @@ def log_line(r: dict, raw: bool = False) -> str:
 
 
 @mcp.tool(annotations=READ)
-def watch_logs(profile: str | None = None, seconds: int = 30, search: str | None = None, status: str | None = None,
-               device: str | None = None, raw: bool = False) -> str:
+def watch_logs(
+    profile: ProfileArg = None,
+    seconds: Annotated[int, Field(description="How long to watch, 5 to 120 seconds.")] = 30,
+    search: LogSearchArg = None,
+    status: LogStatusArg = None,
+    device: DeviceArg = None,
+    raw: RawArg = False,
+) -> str:
     """Watch a profile's queries live for a short time, for example while the user opens an app ("open TikTok
     now"), then show what came in and what was blocked.
     seconds: how long to watch, 5 to 120 (default 30). search, status (blocked, allowed, default, error), device,
@@ -1653,9 +1841,22 @@ def watch_logs(profile: str | None = None, seconds: int = 30, search: str | None
 
 
 @mcp.tool(annotations=READ)
-def chart(report: str = "status", profile: str | None = None, over_time: bool = True, from_date: str = "-7d",
-          to_date: str | None = None, device: str | None = None, interval: str | None = None,
-          timezone: str | None = None, status: str | None = None, limit: int = 10):
+def chart(
+    report: ReportArg = "status",
+    profile: ProfileArg = None,
+    over_time: Annotated[bool, Field(description=(
+        "true: lines over time (up to 6). false: bars of the top rows."))] = True,
+    from_date: Annotated[str, Field(description=(
+        "Where to start, included: an ISO date, Unix time or relative like -6h, -7d or -1M."))] = "-7d",
+    to_date: ToDateArg = None,
+    device: DeviceArg = None,
+    interval: Annotated[str | None, Field(description=(
+        "With over_time: the step between points, like 1h or 1d."))] = None,
+    timezone: Annotated[str | None, Field(description=(
+        "With over_time: the time zone for the steps, like Europe/Lisbon."))] = None,
+    status: DomainStatusArg = None,
+    limit: Annotated[int, Field(description="Bars only: how many rows, up to 20.")] = 10,
+):
     """Draw a profile's analytics as a picture (PNG). Same reports as analytics: status, domains, reasons, ips,
     devices, protocols, queryTypes, ipVersions, dnssec, encryption, destinations.
     over_time=true: lines over time (up to 6), split by interval (e.g. 1h, 1d) and timezone (e.g. Europe/Lisbon).
@@ -1721,7 +1922,10 @@ def differences(a, b, path: str = "") -> list[str]:
 
 
 @mcp.tool(annotations=READ)
-def compare_profiles(first: str, second: str) -> str:
+def compare_profiles(
+    first: Annotated[str, Field(description="The first profile's ID or name.")],
+    second: Annotated[str, Field(description="The second profile's ID or name.")],
+) -> str:
     """What differs between two profiles: switches, lists, parental control, rewrites and settings."""
     cfg = config()
     with nextdns() as c:
@@ -1780,7 +1984,10 @@ def backup_from_file(text: str, note: str = "uploaded") -> dict:
 
 
 @mcp.tool(annotations=WRITE)
-def backup(profile: str | None = None, note: str = "") -> str:
+def backup(
+    profile: ProfileArg = None,
+    note: Annotated[str, Field(description="A few words to recognise the backup later.")] = "",
+) -> str:
     """Save a full copy of a profile (settings, lists, parental control, rewrites) on this server, to restore later.
     note: a few words to recognise it."""
     cfg = config()
@@ -1794,7 +2001,10 @@ def backup(profile: str | None = None, note: str = "") -> str:
 
 
 @mcp.tool(annotations=READ)
-def backups(profile: str | None = None) -> str:
+def backups(
+    profile: Annotated[str | None, Field(description=(
+        "Only backups of this profile (ID or name). Empty shows all."))] = None,
+) -> str:
     """The saved backups, newest first. profile: only those of this profile (ID or name)."""
     rows = list_backups()
     if profile:
@@ -1808,8 +2018,14 @@ def backups(profile: str | None = None) -> str:
 
 @mcp.tool(annotations=ToolAnnotations(read_only_hint=False, destructive_hint=True, idempotent_hint=False,
                                       open_world_hint=False))
-def restore_backup(backup_id: str, profile: str | None = None, new_profile_name: str | None = None,
-                   confirm_code: str | None = None) -> str:
+def restore_backup(
+    backup_id: Annotated[str, Field(description="The backup's ID, from backups.")],
+    profile: Annotated[str | None, Field(description=(
+        "The profile to overwrite. Empty means the one the backup was taken from."))] = None,
+    new_profile_name: Annotated[str | None, Field(description=(
+        "Make a new profile with this name from the backup instead, so nothing is overwritten."))] = None,
+    confirm_code: ConfirmCodeArg = None,
+) -> str:
     """Put a backup back.
     new_profile_name: make a new profile from the backup (nothing is overwritten).
     Otherwise it overwrites a profile (default: the one it was taken from; or profile=...) with the backup: that

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.4 (2026-10-21)
+
+- Security: Pillow, the library that draws charts, is updated to 13.0.0 (9 known problems fixed), and certifi, the list of trusted website certificates, to 2026.10.19 (1 known problem fixed).
+
 ## 0.8.3 (2026-10-21)
 
 - Clearer tool descriptions for AI apps: each says what the tool does and returns, whether it changes anything, and which tool to use instead.

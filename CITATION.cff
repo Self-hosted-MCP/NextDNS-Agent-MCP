@@ -6,6 +6,6 @@ authors:
   - name: "Self-hosted MCP"
 repository-code: "https://github.com/Self-hosted-MCP/NextDNS-Agent-MCP"
 license: Apache-2.0
-version: 0.8.2
+version: 0.8.3
 date-released: "2026-10-21"
 keywords: [mcp, nextdns, dns, self-hosted]

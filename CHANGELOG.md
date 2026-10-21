@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.8.3 (2026-10-21)
+
+- Clearer tool descriptions for AI apps: each says what the tool does and returns, whether it changes anything, and which tool to use instead.
+
 ## 0.8.2 (2026-10-21)
 
 - Every tool input now has a short description, so AI apps know what to pass (for example a profile, a date like -7d or a report).

@@ -674,7 +674,9 @@ DomainStatusArg = Annotated[str | None, Field(description=(
 
 @mcp.tool(annotations=READ)
 def profiles() -> str:
-    """Show the NextDNS profiles this app may use and what it may do with each. Run this first."""
+    """List the NextDNS profiles this app may use: each one's name, ID and mode (read and change, or read only), and
+    which is the default. Call it first, to learn the names or IDs the other tools take; hidden profiles never
+    show. Changes nothing: use profile to see one profile's settings."""
     cfg = config()
     with nextdns() as c:
         shown = visible_profiles(c, cfg)
@@ -703,11 +705,10 @@ def profile(
         "Show just one part in full: security, privacy, parental_control, denylist, allowlist, "
         "rewrites, settings or setup. Empty shows a summary with long lists cut short."))] = None,
 ) -> str:
-    """One profile's settings in a clear summary: security, privacy, parental control, denylist, allowlist,
-    rewrites, settings and setup (the addresses devices use).
-    profile: ID or name (default: the only or default profile).
-    section: show just one part in full: security, privacy, parental_control, denylist, allowlist, rewrites,
-    settings or setup. Without it, long lists are cut short."""
+    """Show one profile's configuration as text: security, privacy, parental control, denylist, allowlist, rewrites,
+    settings and setup (the DNS addresses devices use). Use it to see how a profile is set up before changing
+    it; use compare_profiles to set two side by side and check_domain to know if one domain is blocked. Changes
+    nothing. Without section, long lists are cut short; an unknown section is refused with the valid ones."""
     cfg = config()
     with nextdns() as c:
         p = find_profile(c, profile, cfg)
@@ -763,12 +764,12 @@ def catalog(
         "parental control can block), categories or tlds."))],
     search: Annotated[str | None, Field(description=(
         "Words to look for in the IDs, names and descriptions."))] = None,
-    limit: Annotated[int, Field(description="How many to show.")] = 50,
+    limit: Annotated[int, Field(description="How many to show, 1 to 2000.")] = 50,
 ) -> str:
-    """What NextDNS offers to choose from, with the IDs the change tools take.
-    kind: blocklists (privacy blocklists), natives (native tracking protection: apple, samsung, ...), services
-    (apps parental control can block: tiktok, instagram, ...), categories (porn, gambling, ...) or tlds.
-    search: words to look for in IDs, names and descriptions. limit: how many to show (default 50)."""
+    """List what NextDNS offers to pick from (privacy blocklists, native tracking protection, parental control services
+    and categories, or top-level domains), with the IDs that privacy, security and parental_control take. Use it
+    to find the right ID before a change; use profile to see what a profile already has on. Changes nothing.
+    Returns how many matched and one line per item (blocklists also with size, update date and description)."""
     kind = kind.strip().lower()
     if kind not in CATALOGS:
         raise ToolError(f"Unknown kind {kind!r}. Use one of: {', '.join(CATALOGS)}.")
@@ -844,14 +845,10 @@ def analytics(
         "With series: the time zone for the steps, like Europe/Lisbon."))] = None,
     cursor: CursorArg = None,
 ) -> str:
-    """Query counts from a profile's analytics.
-    report: status (allowed / blocked / default), domains, reasons (why blocked), ips, devices, protocols,
-    queryTypes, ipVersions, dnssec, encryption or destinations.
-    from_date / to_date: start (included) and end (not included); ISO, Unix time or relative (-6h, -7d, -1M).
-    device: a device ID from the devices report, or __UNIDENTIFIED__. status (domains only): blocked, allowed or
-    default. root=true (domains only): group by root domain. destination (destinations only): countries or gafam.
-    limit: rows (1-500). series=true: counts over time, split by interval (e.g. 1h, 1d, 3600) and timezone
-    (e.g. Europe/Lisbon). cursor: from the last answer, for the next page."""
+    """Count a profile's DNS queries over a time span, one report at a time: allowed or blocked, top domains, block
+    reasons, devices, IPs, protocols and more. Use chart for the same numbers as a picture, logs for single
+    queries and watch_logs for queries happening now. Changes nothing. Returns one line per row with its count
+    (counts over time with series), and a cursor line when there are more rows."""
     name = REPORTS.get(report.strip().lower().replace("_", ""))
     if not name:
         raise ToolError(f"Unknown report {report!r}. Use one of: {', '.join(REPORTS.values())}.")
@@ -905,11 +902,11 @@ def logs(
     download_link: Annotated[bool, Field(description=(
         "true: give a link to download the whole log instead of showing it."))] = False,
 ) -> str:
-    """Search a profile's query log, newest first.
-    search: part of a domain (facebook matches facebook.com, fbcdn.net, ...). status: blocked, allowed, default or
-    error. device: device ID or __UNIDENTIFIED__. from_date / to_date: ISO, Unix time or relative (-1h, -1d).
-    limit: 10-1000. raw=true: every query, not just the useful ones (A, AAAA, HTTPS, without repeats).
-    cursor: from the last answer, for the next page. download_link=true: a link to download the whole log instead."""
+    """Search a profile's query log: single DNS queries, newest first, one line each with time (UTC), status, domain,
+    device and block reason. Use it to see what a device looked up or why something was blocked earlier; use
+    watch_logs for queries happening now, analytics for totals and check_domain to test one domain. Changes
+    nothing. Returns a cursor line when there is more, or a private link to download the whole log with
+    download_link; empty when logs are off for the profile."""
     cfg = config()
     with nextdns() as c:
         p = find_profile(c, profile, cfg)
@@ -955,10 +952,11 @@ def list_entries(
         "cut down to the domain."))],
     profile: ProfileArg = None,
 ) -> str:
-    """Change a profile's denylist (always blocked) or allowlist (never blocked). A domain also covers its
-    subdomains.
-    list_name: denylist or allowlist. action: add, remove, on (turn an entry back on) or off (keep it, but not
-    in use). domains: up to 100 at once, like example.com (links are cut down to the domain)."""
+    """Add, remove, turn on or turn off domains in a profile's denylist (always blocked) or allowlist (never blocked);
+    a domain also covers its subdomains. Use it for single domains; use parental_control for whole apps or
+    categories, privacy for blocklists, and check_domain first to see why a domain is blocked. Changes the
+    profile within seconds and records it, so undo can put it back. Returns what was done, what was skipped
+    (already there, not there) or failed (not a domain), and the change ID."""
     name = list_name.strip().lower()
     if name not in ("denylist", "allowlist"):
         raise ToolError("list_name must be denylist or allowlist.")
@@ -1046,11 +1044,11 @@ def privacy(
     allow_affiliate: Annotated[bool | None, Field(description=(
         "true or false: let affiliate and tracking links work. Leave empty to keep it as it is."))] = None,
 ) -> str:
-    """Change a profile's privacy settings. IDs come from catalog (kind blocklists or natives).
-    add_blocklists / remove_blocklists: blocklist IDs, like oisd or hagezi-pro.
-    add_natives / remove_natives: native tracking protection, like apple, samsung, windows, xiaomi.
-    disguised_trackers: block third-party trackers disguised as first-party (true / false).
-    allow_affiliate: let affiliate and tracking links work (true / false). Leave out what shouldn't change."""
+    """Turn a profile's privacy blocklists and native tracking protection on or off, and set its disguised trackers and
+    affiliate links switches. Take the IDs from catalog (kind blocklists or natives); use security for threat
+    protection, parental_control for apps and categories, list_entries for single domains. Changes the profile
+    and records it, so undo can put it back; unknown IDs are refused with close matches, and ones already on or
+    off are skipped. Returns what changed, the change ID and the privacy settings after."""
     add_b, rem_b = clean_ids(add_blocklists), clean_ids(remove_blocklists)
     add_n, rem_n = clean_ids(add_natives), clean_ids(remove_natives)
     if not (add_b or rem_b or add_n or rem_n) and disguised_trackers is None and allow_affiliate is None:
@@ -1127,11 +1125,12 @@ def security(
         "Top-level domains to block entirely, like zip or xyz (from catalog, kind tlds)."))] = None,
     unblock_tlds: Annotated[list[str] | None, Field(description="Top-level domains to stop blocking.")] = None,
 ) -> str:
-    """Change a profile's security protections. profile(section='security') shows them with their keys.
-    turn_on / turn_off: switch keys like threatIntelligenceFeeds, aiThreatDetection, googleSafeBrowsing,
-    cryptojacking, dnsRebinding, idnHomographs, typosquatting, dga, nrd (newly registered domains), ddns, parking,
-    csam, highRiskTlds and more.
-    block_tlds / unblock_tlds: top-level domains to block entirely, like zip or xyz (IDs from catalog kind=tlds)."""
+    """Turn a profile's security protections on or off (threat feeds, AI threat detection, Google Safe Browsing,
+    cryptojacking, typosquatting, newly registered domains and more) and block or unblock whole top-level
+    domains. profile(section='security') shows the switches with their keys and catalog(kind='tlds') the TLD
+    IDs; use privacy for blocklists and list_entries for single domains. Changes the profile and records it, so
+    undo can put it back; unknown keys or TLDs are refused, and ones already set are skipped. Returns what
+    changed and the change ID."""
     cfg = config()
     on_list, off_list = turn_on or [], turn_off or []
     add_t = [t.lstrip(".") for t in clean_ids(block_tlds)]
@@ -1220,15 +1219,12 @@ def parental_control(
         "true or false: block VPNs, proxies and other ways around the filter. Leave empty to "
         "keep it as it is."))] = None,
 ) -> str:
-    """Change a profile's parental control. IDs come from catalog (kind services or categories).
-    block_services / unblock_services: apps and sites like tiktok, instagram, fortnite.
-    block_categories / unblock_categories: porn, gambling, dating, piracy, gaming, social-networks, video-streaming.
-    pause / resume: keep a blocked service or category in the list but stop (or restart) blocking it.
-    allow_in_recreation / block_in_recreation: which blocked services or categories are allowed during
-    recreation time.
-    recreation_times: the hours when those are allowed, per day, like {"monday": "18:00-20:00", "saturday":
-    "10:00-22:00"}; "" removes a day. recreation_timezone: like Europe/Lisbon (needed once times are set).
-    safe_search, youtube_restricted_mode, block_bypass: true or false."""
+    """Change a profile's parental control: block, unblock, pause or resume apps and sites (services) and categories,
+    set recreation time (the hours when chosen ones are allowed), and switch safe search, YouTube restricted
+    mode and bypass blocking. Take the IDs from catalog (kind services or categories); use list_entries for
+    single domains. Changes the profile and records it, so undo can put it back; unknown IDs or times are
+    refused, and anything already set is skipped. Returns what changed, the change ID and the parental control
+    settings after."""
     cfg = config()
     groups = {k: clean_ids(v) for k, v in dict(block_services=block_services, unblock_services=unblock_services,
                                                block_categories=block_categories,
@@ -1333,10 +1329,11 @@ def rewrites(
         "For add: the IPv4 or IPv6 address, or the domain, to answer with."))] = None,
     profile: ProfileArg = None,
 ) -> str:
-    """Add or remove a DNS rewrite: answer a domain with your own IP address or another domain (for example a
-    home server name).
-    action: add or remove. name: the domain, like nas.home or printer.example.com.
-    content (for add): an IPv4 or IPv6 address, or a domain to point to."""
+    """Add or remove a DNS rewrite on a profile: a domain that answers with your own IP address or another domain, like
+    nas.home for a home server. Use profile(section='rewrites') to see the current ones; use list_entries to
+    block or allow a domain instead. Changes the profile and records it, so undo can put it back; adding one
+    that exists or removing one that doesn't changes nothing, and removing without content removes every rewrite
+    for that name. Returns what was done and the change ID."""
     action = action.strip().lower()
     if action not in ("add", "remove"):
         raise ToolError("action must be add or remove.")
@@ -1422,13 +1419,11 @@ def profile_settings(
     web3: Annotated[bool | None, Field(description=(
         "true or false: resolve Web3 domains like .eth. Leave empty to keep it as it is."))] = None,
 ) -> str:
-    """Change a profile's settings. Leave out what shouldn't change.
-    rename: a new name for the profile. logs: keep a query log (true / false).
-    log_retention: how long logs are kept: 1 hour, 6 hours, 1 day, 1 week, 1 month, 3 months, 6 months, 1 year or
-    2 years. log_location: where logs are stored: us, eu, gb or ch.
-    drop_client_ips / drop_domains: leave client IPs or domains out of the logs.
-    block_page: show a block page instead of failing. ecs: EDNS Client Subnet (faster CDNs). cache_boost: keep
-    answers cached longer. cname_flattening: answer with the final address. web3: resolve Web3 domains (.eth, ...)."""
+    """Change a profile's general settings: its name, query logs (on or off, how long, where, what to leave out), the
+    block page, performance (ECS, cache boost, CNAME flattening) and Web3 domains. Use
+    profile(section='settings') to see them first; protections are in security, privacy and parental_control.
+    Changes only the inputs given and records it, so undo can put it back; an unknown retention or location is
+    refused. Returns the settings after the change, or says nothing changed."""
     cfg = config()
     log_patch = {k: v for k, v in (("enabled", logs),) if v is not None}
     if log_retention:
@@ -1612,11 +1607,12 @@ def clear_logs(
 
 @mcp.tool(annotations=READ)
 def changes(
-    limit: Annotated[int, Field(description="How many changes to show.")] = 20,
+    limit: Annotated[int, Field(description="How many changes to show, 1 to 300.")] = 20,
     profile: Annotated[str | None, Field(description="Only changes to this profile (ID or name).")] = None,
 ) -> str:
-    """What was changed through this app, newest first, with the IDs undo takes.
-    profile: only this profile (ID or name). limit: how many (default 20)."""
+    """List the changes made through this app, newest first: change ID, time, app, profile, what changed, and whether
+    it was undone. Use it to find the ID undo takes, or to tell the user what was changed; changes made in the
+    NextDNS dashboard don't show. Changes nothing. Only the newest 300 changes are kept."""
     rows = read_changes()
     if profile:
         key = profile.strip().casefold()
@@ -1756,9 +1752,11 @@ def check_domain(
         "The domain to check, like tiktok.com. A link is cut down to its domain."))],
     profile: ProfileArg = None,
 ) -> str:
-    """Is a domain blocked by this profile, and why? Makes a real DNS query through the profile (like a device
-    would; it shows in the profile's log), then looks at the denylist, allowlist and the log for the reason.
-    domain: like tiktok.com or a link (cut down to the domain)."""
+    """Check whether a domain is blocked by a profile, and why: BLOCKED (with the reason), ALLOWED (with its addresses)
+    or no such domain, plus any matching denylist or allowlist entry and the list_entries call that would change
+    it. Use it when a site doesn't load or should be blocked; use logs or watch_logs for what devices really
+    did. Changes no settings, but makes a real DNS query through the profile, which shows in its log and
+    analytics, and takes a few seconds; a change made a moment ago may not show yet."""
     d = clean_domain(domain)
     if not DOMAIN.match(d):
         raise ToolError(f"{domain!r} isn't a domain.")
@@ -1819,10 +1817,10 @@ def watch_logs(
     device: DeviceArg = None,
     raw: RawArg = False,
 ) -> str:
-    """Watch a profile's queries live for a short time, for example while the user opens an app ("open TikTok
-    now"), then show what came in and what was blocked.
-    seconds: how long to watch, 5 to 120 (default 30). search, status (blocked, allowed, default, error), device,
-    raw: the same filters as logs. Logs must be on for the profile."""
+    """Watch a profile's DNS queries live for 5 to 120 seconds, for example while the user opens an app ("open TikTok
+    now"), then list what came in, one line each with time, status, domain, device and reason, and how many were
+    blocked. Use logs for past queries and analytics for totals. Changes nothing, but the call waits the whole
+    time; logs must be on for the profile, or nothing comes in."""
     seconds = max(5, min(int(seconds), 120))
     cfg = config()
     with nextdns() as c:
@@ -1857,10 +1855,10 @@ def chart(
     status: DomainStatusArg = None,
     limit: Annotated[int, Field(description="Bars only: how many rows, up to 20.")] = 10,
 ):
-    """Draw a profile's analytics as a picture (PNG). Same reports as analytics: status, domains, reasons, ips,
-    devices, protocols, queryTypes, ipVersions, dnssec, encryption, destinations.
-    over_time=true: lines over time (up to 6), split by interval (e.g. 1h, 1d) and timezone (e.g. Europe/Lisbon).
-    over_time=false: bars of the top rows (limit, up to 20). status (domains only): blocked, allowed or default."""
+    """Draw a profile's analytics as a PNG picture: lines over time (up to 6) or bars of the top rows (up to 20), for
+    the same reports as analytics. Use it when the user wants to see a trend or a ranking; use analytics for
+    exact numbers and more rows. Changes nothing. Returns a short text with the totals plus the image, or only a
+    note when there were no queries in that time."""
     from mcp.server.mcpserver import Image
     from . import charts
     name = REPORTS.get(report.strip().lower().replace("_", ""))
@@ -1926,7 +1924,10 @@ def compare_profiles(
     first: Annotated[str, Field(description="The first profile's ID or name.")],
     second: Annotated[str, Field(description="The second profile's ID or name.")],
 ) -> str:
-    """What differs between two profiles: switches, lists, parental control, rewrites and settings."""
+    """Compare two profiles and list every difference in security, privacy, parental control, denylist, allowlist,
+    rewrites and settings (not the names), one line each. Use it to see how two profiles differ or to check a
+    copy made with create_profile; use profile to read one profile in full. Changes nothing. Says so when both
+    have the same settings and lists."""
     cfg = config()
     with nextdns() as c:
         p1, p2 = find_profile(c, first, cfg), find_profile(c, second, cfg)
@@ -1988,8 +1989,10 @@ def backup(
     profile: ProfileArg = None,
     note: Annotated[str, Field(description="A few words to recognise the backup later.")] = "",
 ) -> str:
-    """Save a full copy of a profile (settings, lists, parental control, rewrites) on this server, to restore later.
-    note: a few words to recognise it."""
+    """Save a full copy of a profile (security, privacy, parental control, lists, rewrites and settings, not the logs)
+    on this server, to put back later with restore_backup. Use it before big changes; single changes can already
+    be undone with undo. Changes nothing in NextDNS, only writes the copy. Returns the backup ID and how many
+    list entries it holds; backups lists all copies."""
     cfg = config()
     with nextdns() as c:
         p = find_profile(c, profile, cfg)
@@ -2005,7 +2008,9 @@ def backups(
     profile: Annotated[str | None, Field(description=(
         "Only backups of this profile (ID or name). Empty shows all."))] = None,
 ) -> str:
-    """The saved backups, newest first. profile: only those of this profile (ID or name)."""
+    """List the profile backups saved on this server, newest first: backup ID, time, profile and note. Use it to find
+    the backup_id that restore_backup takes; use backup to make a new one and changes for the change log.
+    Changes nothing, and says so when there are no backups yet."""
     rows = list_backups()
     if profile:
         key = profile.strip().casefold()
@@ -2026,11 +2031,11 @@ def restore_backup(
         "Make a new profile with this name from the backup instead, so nothing is overwritten."))] = None,
     confirm_code: ConfirmCodeArg = None,
 ) -> str:
-    """Put a backup back.
-    new_profile_name: make a new profile from the backup (nothing is overwritten).
-    Otherwise it overwrites a profile (default: the one it was taken from; or profile=...) with the backup: that
-    needs a double confirmation, so the first call gives a code; ask the user, and only after they say yes, call
-    again with confirm_code. It can be undone like any change."""
+    """Put a saved backup back, either as a new profile (new_profile_name, overwrites nothing) or over an existing one
+    (by default the profile it was taken from); take the ID from backups. Overwriting asks twice: the first call
+    changes nothing and gives a code; ask the user, and only after they say yes, call again with confirm_code.
+    Either way it's recorded, so undo can reverse it (undoing a new profile deletes it). Returns what was
+    restored, any parts that didn't come back, and the change ID."""
     b = load_backup(backup_id)
     sections = {k: v for k, v in b["sections"].items() if k != "name"}
     cfg = config()

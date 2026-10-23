@@ -530,7 +530,7 @@ def section_lines(name: str, d: dict, pid: str, full: bool) -> list[str]:
         out = ["Security:"] + switches(d, SECURITY)
         tlds = [t["id"] for t in d.get("tlds") or []]
         return out + [f"  Blocked TLDs ({len(tlds)}): " + (", ".join(tlds if full else tlds[:60]) or "(none)")
-                      + ("" if full or len(tlds) <= 60 else f" ... profile(section='security') for all")]
+                      + ("" if full or len(tlds) <= 60 else " ... profile(section='security') for all")]
     if name == "privacy":
         lists = [f"    {b['id']}" + (f" ({b['name']})" if b.get("name") else "")
                  + (f", {b['entries']:,} domains" if isinstance(b.get("entries"), int) else "")

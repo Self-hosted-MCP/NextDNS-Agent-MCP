@@ -470,7 +470,7 @@ def settings(csrf: str, flash: tuple[str, str] | None, key: dict, profiles: list
         rows = "".join(
             f'<div class="item"><div class="item-head"><b>{esc(p["name"])}</b><span class="muted">{esc(p["id"])}</span>'
             + (f'<span class="badge lime">{esc(_("made by AI"))}</span>' if p.get("created") else "") + "</div>"
-            f'<div class="mode" style="margin-top:10px">'
+            '<div class="mode" style="margin-top:10px">'
             + _select(f"mode_{p['id']}", [(m, _(t)) for m, t in MODE_LABELS.items()], p["mode"], modes_locked)
             + "</div></div>" for p in profiles)
         default = options.get("NEXTDNS_DEFAULT_PROFILE", "")
